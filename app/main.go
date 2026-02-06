@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func test() string {
-	return "testtttt go"
+	return "testtttt 093219309120921 go"
 }
 
 func main() {
