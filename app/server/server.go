@@ -5,6 +5,7 @@ import (
 	"main/message"
 	"net/http"
 	"sync"
+	"time"
 )
 
 type Server struct {
@@ -91,6 +92,18 @@ func (s *Server) Start() {
 }
 
 func Run() {
+	server := &http.Server{
+		Addr:         ":3000",
+		Handler:      nil,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  30 * time.Second,
+	}
+
 	log.Println("Server starting on :3000")
-	log.Fatal(http.ListenAndServe(":3000", nil))
+	log.Println("WebSocket endpoint: ws://localhost:3000/ws")
+
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatal("Server failed to start: ", err)
+	}
 }
