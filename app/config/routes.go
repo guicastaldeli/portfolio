@@ -2,9 +2,14 @@ package config
 
 import (
 	"log"
+	"main/server"
 	"net/http"
 
 	"github.com/gorilla/websocket"
+)
+
+var (
+	wsServer *Server
 )
 
 // Endpoint
@@ -42,10 +47,12 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 }
 
 // Setup
-func Setup() {
+func Setup(s *server.Server) {
+	wsServer = &Server{s}
+
 	InitIndex()
 
-	http.HandleFunc("/ws", wsEndpoint)
+	http.HandleFunc("/ws", wsServer.HandleWebSocket)
 	http.HandleFunc("/hello", Hello)
 	http.HandleFunc("/helloWs", HelloWs)
 }

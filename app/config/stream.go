@@ -23,7 +23,7 @@ var (
 		},
 		HandshakeTimeout: 10 * time.Second,
 	}
-	RealTime *server.Server
+	s *server.Server
 )
 
 // Broadcast
