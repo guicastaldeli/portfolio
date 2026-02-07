@@ -5,6 +5,7 @@ import (
 	"log"
 	"main/message"
 	"main/server"
+	"main/ws"
 	"net/http"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 )
 
 func (s *Server) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
-	conn, err := Upgrader.Upgrade(w, r, nil)
+	conn, err := ws.Upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Printf("Websocket upgrade error!: %v", err)
 		return
