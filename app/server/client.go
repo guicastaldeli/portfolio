@@ -42,7 +42,7 @@ func (s *Server) HandleClientMessage(client *Client, rawMessage []byte) {
 	if err := json.Unmarshal(rawMessage, &msg); err != nil {
 		client.Send <- message.Message{
 			Type:  "error",
-			Error: "Invalid message format",
+			Error: "Invalid route format",
 		}
 		return
 	}

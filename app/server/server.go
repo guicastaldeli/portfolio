@@ -2,7 +2,6 @@ package server
 
 import (
 	"log"
-
 	"main/message"
 	"net/http"
 	"sync"
@@ -92,7 +91,6 @@ func (s *Server) Start() {
 }
 
 func Run() {
-	//config.Setup()
 	log.Println("Server starting on :3000")
 	log.Fatal(http.ListenAndServe(":3000", nil))
 }
