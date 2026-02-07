@@ -1,3 +1,4 @@
 @echo off
-go run ./app/main.go
+cd /d %~dp0\app
+go run .
 pause
