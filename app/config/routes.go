@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -12,15 +11,6 @@ import (
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
-}
-
-// Hello
-func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "hello!")
-}
-
-func helloWs(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "hello WebSocket!")
 }
 
 // Endpoint
@@ -62,6 +52,6 @@ func Setup() {
 	InitIndex()
 
 	http.HandleFunc("/ws", wsEndpoint)
-	http.HandleFunc("/hello", hello)
-	http.HandleFunc("/helloWs", helloWs)
+	http.HandleFunc("/hello", Hello)
+	http.HandleFunc("/helloWs", HelloWs)
 }
