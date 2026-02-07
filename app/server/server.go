@@ -2,29 +2,30 @@ package server
 
 import (
 	"log"
-	"main/config"
+
+	"main/message"
 	"net/http"
 	"sync"
 )
 
 type Server struct {
-	clients     map[string]*Client
-	broadcast   chan config.Message
-	register    chan *Client
-	unregister  chan *Client
-	subscribe   chan config.Subscription
-	unsubscribe chan config.Subscription
-	mutex       sync.RWMutex
+	Clients     map[string]*Client
+	Broadcast   chan message.Message
+	Register    chan *Client
+	Unregister  chan *Client
+	Subscribe   chan message.Subscription
+	Unsubscribe chan message.Subscription
+	Mutex       sync.RWMutex
 }
 
 func NewServer() *Server {
 	return &Server{
-		clients:     make(map[string]*Client),
-		broadcast:   make(chan config.Message),
-		register:    make(chan *Client),
-		unregister:  make(chan *Client),
-		subscribe:   make(chan config.Subscription),
-		unsubscribe: make(chan config.Subscription),
+		Clients:     make(map[string]*Client),
+		Broadcast:   make(chan message.Message),
+		Register:    make(chan *Client),
+		Unregister:  make(chan *Client),
+		Subscribe:   make(chan message.Subscription),
+		Unsubscribe: make(chan message.Subscription),
 	}
 }
 
@@ -34,42 +35,42 @@ func (s *Server) Start() {
 	for {
 		select {
 		// Connected
-		case client := <-s.register:
-			s.mutex.Lock()
-			s.clients[client.Id] = client
-			s.mutex.Unlock()
+		case client := <-s.Register:
+			s.Mutex.Lock()
+			s.Clients[client.Id] = client
+			s.Mutex.Unlock()
 
-			log.Println("Client %s connected. Total: %d", client.Id, len(s.clients))
+			log.Printf("Client %s connected. Total: %d", client.Id, len(s.Clients))
 		// Disconnected
-		case client := <-s.unregister:
-			s.mutex.Lock()
-			if c, ok := s.clients[client.Id]; ok {
-				delete(s.clients, client.Id)
+		case client := <-s.Unregister:
+			s.Mutex.Lock()
+			if c, ok := s.Clients[client.Id]; ok {
+				delete(s.Clients, client.Id)
 				close(c.Send)
 			}
-			s.mutex.Unlock()
-			log.Println("Client %s disconnected; Total: %d", client.Id, len(s.clients))
+			s.Mutex.Unlock()
+			log.Printf("Client %s disconnected; Total: %d", client.Id, len(s.Clients))
 		// Subscribe
-		case sub := <-s.subscribe:
-			s.mutex.Lock()
-			if client, ok := s.clients[sub.ClientId]; ok {
+		case sub := <-s.Subscribe:
+			s.Mutex.Lock()
+			if client, ok := s.Clients[sub.ClientId]; ok {
 				if client.Channels == nil {
 					client.Channels = make(map[string]bool)
 				}
 				client.Channels[sub.Channel] = true
 			}
-			s.mutex.Unlock()
+			s.Mutex.Unlock()
 		// Unsubscribe
-		case unsub := <-s.unsubscribe:
-			s.mutex.Lock()
-			if client, ok := s.clients[unsub.ClientId]; ok {
+		case unsub := <-s.Unsubscribe:
+			s.Mutex.Lock()
+			if client, ok := s.Clients[unsub.ClientId]; ok {
 				delete(client.Channels, unsub.Channel)
 			}
-			s.mutex.Unlock()
+			s.Mutex.Unlock()
 		// Broadcast
-		case message := <-s.broadcast:
-			s.mutex.RLock()
-			for _, client := range s.clients {
+		case message := <-s.Broadcast:
+			s.Mutex.RLock()
+			for _, client := range s.Clients {
 				if message.Channel != "" {
 					if !client.Channels[message.Channel] {
 						continue
@@ -78,20 +79,20 @@ func (s *Server) Start() {
 
 				select {
 				case client.Send <- message:
-					log.Println("Client %s: Message sent", client.Id)
+					log.Printf("Client %s: Message sent", client.Id)
 				default:
 					close(client.Send)
-					delete(s.clients, client.Id)
+					delete(s.Clients, client.Id)
 				}
 			}
-			s.mutex.RUnlock()
+			s.Mutex.RUnlock()
 		}
 
 	}
 }
 
 func Run() {
-	config.Setup()
+	//config.Setup()
 	log.Println("Server starting on :3000")
 	log.Fatal(http.ListenAndServe(":3000", nil))
 }

@@ -7,12 +7,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// Upgrader
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
-
 // Endpoint
 func reader(conn *websocket.Conn) {
 	for {
