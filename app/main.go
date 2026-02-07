@@ -4,11 +4,15 @@ import (
 	"log"
 	"main/config"
 	"main/server"
+	"main/ws"
 	"net/http"
 )
 
 func main() {
-	wsServer := server.Run()
+	serverInstance := server.Run()
+	wsServer := &ws.Server{
+		Server: serverInstance,
+	}
 	config.Setup(wsServer)
 
 	if err := http.ListenAndServe(":3000", nil); err != nil {

@@ -3,11 +3,11 @@ package config
 import (
 	"log"
 	"main/message"
-	"main/server"
+	"main/ws"
 )
 
 type Server struct {
-	*server.Server
+	*ws.Server
 }
 
 // Broadcast

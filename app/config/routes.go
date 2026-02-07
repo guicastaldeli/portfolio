@@ -3,7 +3,6 @@ package config
 import (
 	"log"
 	"main/api"
-	"main/server"
 	"main/ws"
 	"net/http"
 
@@ -49,13 +48,14 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 }
 
 // Setup
-func Setup(s *server.Server) {
+func Setup(s *ws.Server) {
 	wsServer = &Server{s}
 
 	InitIndex()
 
 	http.HandleFunc("/ws", wsServer.HandleWebSocket)
 	http.HandleFunc("/time-stream", api.TimeStreamHandler)
+	http.HandleFunc("/count", api.ClientsConnectedHandler(s))
 	http.HandleFunc("/hello", Hello)
 	http.HandleFunc("/helloWs", HelloWs)
 }
