@@ -1,1 +1,3 @@
-console.log('tststst2222');
+import { Main } from "./main";
+
+new Main();
