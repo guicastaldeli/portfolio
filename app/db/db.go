@@ -131,7 +131,7 @@ func Exec(
 // Init
 func Init() Config {
 	return Config{
-		DataDir: "./data/",
-		SrcDir:  "./src",
+		DataDir: "db/data",
+		SrcDir:  "db/src",
 	}
 }

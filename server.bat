@@ -1,4 +1,6 @@
 @echo off
-cd /d %~dp0\app
+cd /d "%~dp0app"
+
 go run .
+
 pause
