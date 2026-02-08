@@ -7,7 +7,7 @@ export class GetTimeStream {
 
     constructor(main: Main) {
         this.main = main;
-        this.el = document.querySelector('.main #time-stream');
+        this.el = document.querySelector('.main #time-stream #t-time');
     }
 
     /**
@@ -23,7 +23,9 @@ export class GetTimeStream {
             try {
                 const data = JSON.parse(e.data);
                 if(data.type === 'timeUpdate') {
-                    this.el!.textContent = `Time: ${data.formatted}`;
+                    const date = new Date(data.timestamp);
+                    const formatted = date.toLocaleString();
+                    this.el!.textContent = formatted;
                 }
             } catch(err) {
                 console.error(err);

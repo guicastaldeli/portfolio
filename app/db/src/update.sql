@@ -1,0 +1,5 @@
+CREATE TRIGGER IF NOT EXISTS updateProjectTimestamp
+AFTER UPDATE ON projects
+BEGIN
+    UPDATE project SET updateAt = CURRENT_TIMESTAMP WHERE id = NEW.id;
+END;

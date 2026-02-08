@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS media (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    projectId INETEGER NOT NULL,
+    type TEXT NOT NULL,
+    url TEXT NOT NULL,
+    FOREIGN KEY (projectId) REFERENCES project(id) ON DELETE CASCADE 
+);
+
+CREATE INDEX IF NOT EXISTS idx_media_project_id ON media(projectId);

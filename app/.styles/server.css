@@ -1,0 +1,31 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    top: 0;
+}
+
+.main {
+    position: absolute;
+    top: 0;
+    border: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#api-list {
+    display: flex;
+    flex-direction: column;
+}
+
+#t-time {
+    color: rgb(0, 89, 255);
+}
+
+#c-clients {
+    color: rgb(150, 46, 46);
+}
+#c-clients:is(#client-count[data-count]:not([data-count="0"]) *) {
+    color: rgb(53, 162, 53) !important;
+}

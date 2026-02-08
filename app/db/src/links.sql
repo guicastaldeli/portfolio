@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS links (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    projectId INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    url TEXT NOT NULL,
+    FOREIGN KEY (projectId) REFERENCES project(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_links_project_id ON links(projectId)

@@ -2,12 +2,15 @@ import { Main } from "./main.js";
 
 export class GetClientCount {
     private main: Main;
+    public ws: WebSocket | null = null;
+
     private el: HTMLSpanElement | null = null;
-    public ws: WebSocket | null = null; 
-    
+    private container: HTMLDivElement | null = null;
+
     constructor(main: Main) {
         this.main = main;
-        this.el = document.querySelector('.main #client-count');
+        this.container = document.querySelector('#client-count'); 
+        this.el = document.querySelector('#c-clients');
     }
     
     /**
@@ -23,7 +26,9 @@ export class GetClientCount {
             try {
                 const data = JSON.parse(e.data);
                 if(data.type === 'clientsUpdate') {
-                    this.el!.textContent = `Clients: ${data.count}`;
+                    const content = data.count;
+                    this.el!.textContent = `${content}`;
+                    this.container?.setAttribute('data-count', data.count.toString());
                 }
             } catch(err) {
                 console.error(err);
