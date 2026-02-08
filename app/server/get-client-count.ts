@@ -1,4 +1,4 @@
-import { Main } from "./main";
+import { Main } from "./main.js";
 
 export class GetClientCount {
     private main: Main;
@@ -13,8 +13,8 @@ export class GetClientCount {
     /**
      * Connect
      */
-    public connect() {
-        const url = '/time-stream';
+    public async connect(): Promise<void> {
+        const url = '/count';
     
         this.main.protocol(url);
     
@@ -30,10 +30,10 @@ export class GetClientCount {
             }
         }
         this.ws.onerror = (err) => {
-            console.error('Time WS error', err);
+            console.error('Client WS error', err);
         }
         this.ws.onclose = () => {
-            console.log('Time stream disconnected, reconnecting...');
+            console.log('Client count disconnected, reconnecting...');
             setTimeout(this.connect, 3000);
         }
     }

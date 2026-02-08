@@ -1,4 +1,4 @@
-import { Main } from "./main";
+import { Main } from "./main.js";
 
 export class GetTimeStream {
     private main: Main;
@@ -7,13 +7,13 @@ export class GetTimeStream {
 
     constructor(main: Main) {
         this.main = main;
-        this.el = document.querySelector('.main time-stream');
+        this.el = document.querySelector('.main #time-stream');
     }
 
     /**
      * Connect
      */
-    public connect() {
+    public async connect(): Promise<void> {
         const url = '/time-stream';
 
         this.main.protocol(url);

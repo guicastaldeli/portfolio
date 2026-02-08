@@ -17,7 +17,7 @@ type ClientsUpdate struct {
 
 func ClientsConnectedHandler(s *ws.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Header.Get("Uprgade") == "websocket" {
+		if r.Header.Get("Upgrade") == "websocket" {
 			setClientCount(s, w, r)
 			return
 		}
