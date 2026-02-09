@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Editor</title>
+    <link rel="stylesheet" href="../.styles/editor.css">
+</head>
+<body>
+    <div class="main">
+        <h1>Project Editor</h1>
+        
+        <!-- Project List -->
+        <div id="project-list">
+            <h2>Projects</h2>
+            <button id="create-new-btn">Create New Project</button>
+            <div id="projects-container"></div>
+        </div>
+
+        <!-- Project Form -->
+        <div id="project-form" class="hidden">
+            <h2 id="form-title">Create Project</h2>
+            <form id="edit-form">
+                <input type="hidden" id="project-id">
+                
+                <div class="form-group">
+                    <label for="project-name">Name:</label>
+                    <input type="text" id="project-name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="project-desc">Description:</label>
+                    <textarea id="project-desc" rows="4" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="project-repo">Repository URL:</label>
+                    <input type="url" id="project-repo">
+                </div>
+
+                <div class="form-group">
+                    <label>Photos (URLs):</label>
+                    <div id="photos-container">
+                        <input type="url" class="photo-input" placeholder="Photo URL">
+                    </div>
+                    <button type="button" id="add-photo-btn">+ Add Photo</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Videos (URLs):</label>
+                    <div id="videos-container">
+                        <input type="url" class="video-input" placeholder="Video URL">
+                    </div>
+                    <button type="button" id="add-video-btn">+ Add Video</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Links:</label>
+                    <div id="links-container">
+                        <div class="link-input-group">
+                            <input type="text" class="link-name" placeholder="Link name">
+                            <input type="url" class="link-url" placeholder="URL">
+                        </div>
+                    </div>
+                    <button type="button" id="add-link-btn">+ Add Link</button>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="save-btn">Save</button>
+                    <button type="button" id="cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="module" src="/.out/editor/index.js"></script>
+</body>
+</html>

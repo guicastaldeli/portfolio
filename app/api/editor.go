@@ -6,6 +6,7 @@ import (
 	"log"
 	"main/db"
 	"main/message"
+	"main/ws"
 	"net/http"
 	"strconv"
 	"strings"
@@ -57,7 +58,11 @@ func GetProjectHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	idStr := strings.TrimPrefix(r.URL.Path, "/api/projects")
+	idStr := strings.TrimPrefix(r.URL.Path, "/api/projects/")
+	if idStr == "" || idStr == "/" {
+		http.Error(w, "Invalid project Id", http.StatusBadRequest)
+		return
+	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "Invalid project Id", http.StatusBadRequest)
@@ -100,216 +105,251 @@ func GetProjectHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Create Project
-func CreateProjectHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
+func CreateProjectHandler(wsServer *ws.Server) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
 
-	var req message.CreateProjectRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+		var req message.CreateProjectRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 
-	database, err := db.GetDb("project")
-	if err != nil {
-		return
-	}
+		database, err := db.GetDb("project")
+		if err != nil {
+			return
+		}
 
-	tx, err := database.Begin()
-	if err != nil {
-		return
-	}
-	defer tx.Rollback()
+		tx, err := database.Begin()
+		if err != nil {
+			return
+		}
+		defer tx.Rollback()
 
-	res, err := tx.Exec(
-		db.Q(db.InsertProject),
-		req.Name,
-		req.Desc,
-		req.Repo,
-	)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	projectId, _ := res.LastInsertId()
-	for _, photo := range req.Photos {
-		_, err := tx.Exec(
-			db.Q(db.InsertMedia),
-			projectId,
-			"photo",
-			photo,
+		res, err := tx.Exec(
+			db.Q(db.InsertProject),
+			req.Name,
+			req.Desc,
+			req.Repo,
 		)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-	}
-	for _, video := range req.Videos {
-		_, err := tx.Exec(
-			db.Q(db.InsertMedia),
-			projectId,
-			"video",
-			video,
-		)
-		if err != nil {
+
+		projectId, _ := res.LastInsertId()
+		for _, photo := range req.Photos {
+			_, err := tx.Exec(
+				db.Q(db.InsertMedia),
+				projectId,
+				"photo",
+				photo,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+		for _, video := range req.Videos {
+			_, err := tx.Exec(
+				db.Q(db.InsertMedia),
+				projectId,
+				"video",
+				video,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+		for _, link := range req.Links {
+			_, err := tx.Exec(
+				db.Q(db.InsertMedia),
+				projectId,
+				link.Name,
+				link.URL,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+
+		if err := tx.Commit(); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-	}
-	for _, link := range req.Links {
-		_, err := tx.Exec(
-			db.Q(db.InsertMedia),
-			projectId,
-			link.Name,
-			link.URL,
-		)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+
+		wsServer.Broadcast <- message.Message{
+			Type:    "project_created",
+			Channel: "projects",
+			Data: map[string]interface{}{
+				"id":   projectId,
+				"name": req.Name,
+			},
 		}
-	}
 
-	if err := tx.Commit(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"id":      projectId,
+			"message": "Project created successfully",
+		})
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"id":      projectId,
-		"message": "Project created successfully",
-	})
 }
 
 // Update Project
-func UpdateProjectHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPut {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
+func UpdateProjectHandler(wsServer *ws.Server) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPut {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
 
-	idStr := strings.TrimPrefix(r.URL.Path, "/api/projects")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		http.Error(w, "Invalid project Id", http.StatusBadRequest)
-		return
-	}
+		idStr := strings.TrimPrefix(r.URL.Path, "/api/projects/")
+		if idStr == "" || idStr == "/" {
+			http.Error(w, "Invalid project Id", http.StatusBadRequest)
+			return
+		}
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid project Id", http.StatusBadRequest)
+			return
+		}
 
-	var req message.UpdateProjectRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+		var req message.UpdateProjectRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 
-	database, err := db.GetDb("project")
-	if err != nil {
-		return
-	}
+		database, err := db.GetDb("project")
+		if err != nil {
+			return
+		}
 
-	tx, err := database.Begin()
-	if err != nil {
-		return
-	}
-	defer tx.Rollback()
+		tx, err := database.Begin()
+		if err != nil {
+			return
+		}
+		defer tx.Rollback()
 
-	_, err = tx.Exec(
-		db.Q(db.UpdateProject),
-		req.Name,
-		req.Desc,
-		req.Repo,
-		id,
-	)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	_, err = tx.Exec(db.Q(db.DeleteProjectMedia), id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	_, err = tx.Exec(db.Q(db.DeleteProjectLinks), id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	for _, photo := range req.Photos {
-		_, err := tx.Exec(
-			db.Q(db.InsertMedia),
+		_, err = tx.Exec(
+			db.Q(db.UpdateProject),
+			req.Name,
+			req.Desc,
+			req.Repo,
 			id,
-			"photo",
-			photo,
 		)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-	}
-	for _, video := range req.Videos {
-		_, err := tx.Exec(
-			db.Q(db.InsertMedia),
-			id,
-			"video",
-			video,
-		)
+
+		_, err = tx.Exec(db.Q(db.DeleteProjectMedia), id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-	}
-	for _, link := range req.Links {
-		_, err := tx.Exec(
-			db.Q(db.InsertMedia),
-			id,
-			link.Name,
-			link.URL,
-		)
+		_, err = tx.Exec(db.Q(db.DeleteProjectLinks), id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-	}
 
-	if err := tx.Commit(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+		for _, photo := range req.Photos {
+			_, err := tx.Exec(
+				db.Q(db.InsertMedia),
+				id,
+				"photo",
+				photo,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+		for _, video := range req.Videos {
+			_, err := tx.Exec(
+				db.Q(db.InsertMedia),
+				id,
+				"video",
+				video,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+		for _, link := range req.Links {
+			_, err := tx.Exec(
+				db.Q(db.InsertMedia),
+				id,
+				link.Name,
+				link.URL,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{
-		"message": "Project updated successfully",
-	})
+		if err := tx.Commit(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		wsServer.Broadcast <- message.Message{
+			Type:    "project_updated",
+			Channel: "projects",
+			Data: map[string]interface{}{
+				"id": id,
+			},
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Project updated successfully",
+		})
+	}
 }
 
 // Delete Project
-func DeleteProjectHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodDelete {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
+func DeleteProjectHandler(wsServer *ws.Server) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodDelete {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
 
-	idStr := strings.TrimPrefix(r.URL.Path, "/api/projects/")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		http.Error(w, "Invalid Project Id", http.StatusBadRequest)
-		return
-	}
+		idStr := strings.TrimPrefix(r.URL.Path, "/api/projects/")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid Project Id", http.StatusBadRequest)
+			return
+		}
 
-	_, err = db.Exec("project", db.Q(db.DeleteProject), id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+		_, err = db.Exec("project", db.Q(db.DeleteProject), id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{
-		"message": "Project deleted successfully",
-	})
+		wsServer.Broadcast <- message.Message{
+			Type:    "project_deleted",
+			Channel: "projects",
+			Data: map[string]interface{}{
+				"id": id,
+			},
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Project deleted successfully",
+		})
+	}
 }
 
 func getProjectMedia(projectId int) []message.Media {
@@ -354,4 +394,33 @@ func getProjectLinks(projectId int) []message.Link {
 		links = append(links, l)
 	}
 	return links
+}
+
+// Handlers
+func HandleProjects(wsServer *ws.Server) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			GetAllProjectsHandler(w, r)
+		case http.MethodPost:
+			CreateProjectHandler(wsServer)(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}
+}
+
+func HandleProjectById(wsServer *ws.Server) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			GetProjectHandler(w, r)
+		case http.MethodPut:
+			UpdateProjectHandler(wsServer)(w, r)
+		case http.MethodDelete:
+			DeleteProjectHandler(wsServer)(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}
 }

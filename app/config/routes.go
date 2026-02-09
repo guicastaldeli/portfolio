@@ -54,8 +54,11 @@ func Setup(s *ws.Server) {
 	InitIndex()
 
 	http.HandleFunc("/ws", wsServer.HandleWebSocket)
-	http.HandleFunc("/time-stream", api.TimeStreamHandler)
-	http.HandleFunc("/count", api.ClientsConnectedHandler(s))
 	http.HandleFunc("/hello", Hello)
 	http.HandleFunc("/helloWs", HelloWs)
+
+	http.HandleFunc("/time-stream", api.TimeStreamHandler)
+	http.HandleFunc("/count", api.ClientsConnectedHandler(s))
+	http.HandleFunc("/api/projects", api.HandleProjects(s))
+	http.HandleFunc("/api/projects/", api.HandleProjectById(s))
 }
