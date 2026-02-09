@@ -1,6 +1,504 @@
 html, body {
+    font-family: 'Helvetica';
+    display: flex;
+    flex: 1;
+    min-height: 0;
     width: 100%;
     height: 100%;
+    margin: 0 !important;
+    border: 0 !important;
+}
+
+.main {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#content {
+    width: 70%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#final {
+    width: 90%;
+    height: 100%;
+}
+
+#final-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+#header {
+    display: flex;
+    justify-content: space-between;
+    padding: 0rem 2rem;
+    border-bottom: 0.1rem solid rgb(191, 191, 191);
+}
+
+.hidden {
+    display: none;
+}
+
+#create-new-btn-container {
+    width: 15%;
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#create-new-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+    border: 0;
     margin: 0;
-    top: 0;
+    width: 90%;
+    height: 70%;
+    font-size: 1.2rem;
+}
+
+#create-new-btn:hover {
+    background: rgb(0, 109, 225);
+}
+
+#projects-container {
+    display: grid;
+    grid-template-rows: repeat(auto-fill, minmax(200px, 1fr)) !important;
+    gap: 0.5rem;
+}
+
+.project-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+#project-main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-left: 0.5rem;
+}
+
+#project-info h3, p {
+    margin: 0 !important;
+    border: 0 !important;
+    width: fit-content !important;
+    height: fit-content !important;
+}
+
+.project-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #ffffff;
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+    min-height: 100px;
+}
+.project-container:hover {
+    background-color: rgba(0, 0, 0, 0.062);
+}
+
+#project-name {
+    font-size: 14px;
+}
+
+.project-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-btn, .delete-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 2px;
+}
+
+.edit-btn {
+    background: #28a745;
+    color: white;
+}
+
+.delete-btn {
+    background: #dc3545;
+    color: white;
+}
+
+#project-form {
+    margin-top: 2.5rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    border-radius: 8px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+#project-form h2 {
+    margin-top: 0;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    max-width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.photo-input, .video-input {
+    margin-bottom: 10px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+#photos-container,
+#videos-container,
+#links-container {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.link-input-group {
+    display: grid;
+    grid-template-columns: 1fr 2fr auto;
+    gap: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.link-input-group input {
+    min-width: 0;
+}
+
+.remove-link-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+#add-photo-btn, #add-video-btn, #add-link-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#save-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+}
+
+#save-btn:hover {
+    background: #0056b3;
+}
+
+#cancel-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+}
+
+#cancel-btn:hover {
+    background: #5a6268;
+}
+
+.project-photos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.photo-item {
+    width: 200px;
+    height: 200px;
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+.project-videos {
+    margin: 15px 0;
+}
+
+.video-item video {
+    max-width: 300px;
+    border-radius: 4px;
+}
+
+.project-description {
+    margin: 10px 0;
+    color: #555;
+    line-height: 1.5;
+    font-size: 12px;
+}
+
+.project-links {
+    margin: 15px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.project-link {
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.project-link:hover {
+    background-color: #0056b3;
+}
+
+.project-repo {
+    margin: 10px 0;
+    font-size: 12px;
+}
+
+.project-metadata {
+    color: #888;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 5%;
+}
+
+#project-metadata-content {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+#project-metadata-content small {
+    width: fit-content;
+}
+
+.edit-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #218838;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+@media screen and (max-width: 1024px) {
+    #content {
+        width: 85%;
+    }
+    
+    .project-main {
+        width: 85%;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .project-container {
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+    }
+    
+    .project-metadata {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    
+    #project-metadata-content {
+        width: 100%;
+        flex-direction: row;
+        gap: 1rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #content {
+        width: 95%;
+        border-left: none;
+        border-right: none;
+    }
+    
+    #final {
+        width: 95%;
+    }
+    
+    #header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    #create-new-btn-container {
+        width: 100%;
+    }
+    
+    #create-new-btn {
+        width: 100%;
+        height: auto;
+        padding: 12px;
+    }
+    
+    .project-container {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+    }
+    
+    .project-main {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .project-metadata {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    #project-metadata-content {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .project-photos {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .photo-item img {
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .video-item video {
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .project-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .edit-btn, .delete-btn {
+        width: 100%;
+    }
+    
+    .link-input-group {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+    
+    #project-form {
+        padding: 1rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #final-content {
+        gap: 1rem;
+    }
+    
+    .project-container {
+        padding: 0.75rem;
+    }
+    
+    #create-new-btn {
+        font-size: 1rem;
+    }
+    
+    .project-link {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        font-size: 16px;
+    }
+    
+    #project-form {
+        padding: 0.75rem;
+    }
 }

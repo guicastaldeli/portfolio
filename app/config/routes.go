@@ -54,11 +54,11 @@ func Setup(s *ws.Server) {
 	InitIndex()
 
 	http.HandleFunc("/ws", wsServer.HandleWebSocket)
-	http.HandleFunc("/hello", Hello)
-	http.HandleFunc("/helloWs", HelloWs)
+	http.HandleFunc("/hello", EnableCORS(Hello))
+	http.HandleFunc("/helloWs", EnableCORS(HelloWs))
 
-	http.HandleFunc("/time-stream", api.TimeStreamHandler)
-	http.HandleFunc("/count", api.ClientsConnectedHandler(s))
-	http.HandleFunc("/api/projects", api.HandleProjects(s))
-	http.HandleFunc("/api/projects/", api.HandleProjectById(s))
+	http.HandleFunc("/time-stream", EnableCORS(api.TimeStreamHandler))
+	http.HandleFunc("/count", EnableCORS(api.ClientsConnectedHandler(s)))
+	http.HandleFunc("/api/projects", EnableCORS(api.HandleProjects(s)))
+	http.HandleFunc("/api/projects/", EnableCORS(api.HandleProjectById(s)))
 }

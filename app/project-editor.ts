@@ -95,6 +95,7 @@ export class ProjectEditor {
             return;
         }
 
+        console.log(`Rendering ${this.currentProjects.length} projects`);
         this.currentProjects.forEach(project => {
             const photos = project.media.filter(m => m.type === 'photo');
             const videos = project.media.filter(m => m.type === 'video');
@@ -156,20 +157,22 @@ export class ProjectEditor {
                         <small>Updated: ${new Date(project.updatedAt).toLocaleDateString()}</small>
                     </div>
                 </div>
-                ${mediaHtml}
-                <div class="project-info">
-                    <div id="project-info-content">
-                        <h3>${this.escapeHtml(project.name)}</h3>
-                        ${project.repo ? `
-                            <div class="project-repo">
-                                <strong>Repository:</strong> 
-                                <a href="${this.escapeHtml(project.repo)}" target="_blank">
-                                    ${this.escapeHtml(project.repo)}
-                                </a>
-                            </div>
-                        ` : ''}
-                        <p class="project-description">${this.escapeHtml(project.desc)}</p>
-                        ${linksHtml}
+                <div class="project-main">
+                    <div id="project-main-content">
+                        ${mediaHtml}
+                        <div id="project-info">
+                            <h3 id="project-name">${this.escapeHtml(project.name)}</h3>
+                            ${project.repo ? `
+                                <div class="project-repo">
+                                    <strong>Repository:</strong> 
+                                    <a href="${this.escapeHtml(project.repo)}" target="_blank">
+                                        ${this.escapeHtml(project.repo)}
+                                    </a>
+                                </div>
+                            ` : ''}
+                            <p class="project-description">${this.truncate(this.escapeHtml(project.desc), 25, 3)}</p>
+                            ${linksHtml}
+                        </div>
                     </div>
                 </div>
                 <div class="project-actions">
@@ -196,6 +199,25 @@ export class ProjectEditor {
         const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv'];
         const lowerUrl = url.toLowerCase();
         return videoExtensions.some(ext => lowerUrl.endsWith(ext));
+    }
+
+    private truncate(
+        text: string,
+        charsPerLine: number, 
+        maxLines: number
+    ): string {
+        const maxChars = charsPerLine * maxLines;
+        const sliced = text.slice(0, maxChars);
+        const lines: string[] = [];
+
+        for(let i = 0; i < sliced.length; i += charsPerLine) {
+            lines.push(sliced.slice(i, i + charsPerLine));
+        }
+
+        const needsEllipsis = text.length > maxChars;
+        if(needsEllipsis) lines[lines.length - 1] += '...';
+
+        return lines.join('<br>');
     }
 
     /**
@@ -278,6 +300,7 @@ export class ProjectEditor {
         const form = document.getElementById('project-form');
         const formTitle = document.getElementById('form-title');
         const projectList = document.getElementById('project-list');
+        const header = document.getElementById('header');
         if(!form || !formTitle || !projectList) return;
 
         if(project) {
@@ -292,17 +315,20 @@ export class ProjectEditor {
 
         form.classList.remove('hidden');
         projectList.classList.add('hidden');
+        if(header) header.style.display = 'none';
     }
 
     private hideForm(): void {
         const form = document.getElementById('project-form');
         const projectList = document.getElementById('project-list');
+        const header = document.getElementById('header');
 
         if(!form || !projectList) return;
 
         form.classList.add('hidden');
         projectList.classList.remove('hidden');
         this.resetForm();
+        if(header) header.style.display = 'flex';
     }
 
     private populateForm(project: Project): void {
