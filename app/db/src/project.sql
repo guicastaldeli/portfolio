@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS project (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    desc TEXT,
+    description TEXT,
     repo TEXT,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -11,6 +11,6 @@ CREATE TRIGGER IF NOT EXISTS updateProjectTimestamp
 AFTER UPDATE ON project
 BEGIN
     UPDATE project
-    SET updateAt = CURRENT_TIMESTAMP
+    SET updatedAt = CURRENT_TIMESTAMP
     WHERE id = NEW.id;
 END;

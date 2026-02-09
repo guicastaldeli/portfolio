@@ -6,7 +6,7 @@ type QueryKey string
 const (
 	// Projects
 	GetAllProjects QueryKey = "GET_ALL_PROJECTS"
-	GetProjectById QueryKey = "GET_PEOJECT_BY_ID"
+	GetProjectById QueryKey = "GET_PROJECT_BY_ID"
 	InsertProject  QueryKey = "INSERT_PROJECT"
 	UpdateProject  QueryKey = "UPDATE_PROJECT"
 	DeleteProject  QueryKey = "DELETE_PROJECT"
@@ -26,24 +26,24 @@ const (
 var QueryRegistry = map[QueryKey]string{
 	// Projects
 	GetAllProjects: `
-		SELECT id, name, desc, repo, createdAt, updatedAt
-		FROM project,
-		ORDER BY updatedAt DES
+		SELECT id, name, description, repo, createdAt, updatedAt
+		FROM project
+		ORDER BY updatedAt DESC
 	`,
 	GetProjectById: `
-		SELECT id, name, desc, repo, createdAt, updatedAt,
-		FROM project,
+		SELECT id, name, description, repo, createdAt, updatedAt
+		FROM project
 		WHERE id = ?
 	`,
 	InsertProject: `
-		INSERT INTO project(name, desc, repo)
+		INSERT INTO project(name, description, repo)
 		VALUES(?, ?, ?)
 	`,
 	UpdateProject: `
-		UPDATE projects
+		UPDATE project
 		SET 
 			name = ?,
-			desc = ?,
+			description = ?,
 			repo = ?,
 			updatedAt = CURRENT_TIMESTAMP
 		WHERE id = ?
@@ -54,8 +54,8 @@ var QueryRegistry = map[QueryKey]string{
 
 	// Media
 	GetProjectMedia: `
-		SELECT id, projectId, type, url,
-		FROM media,
+		SELECT id, projectId, type, url
+		FROM media
 		WHERE projectId = ?
 	`,
 	InsertMedia: `
@@ -77,7 +77,7 @@ var QueryRegistry = map[QueryKey]string{
 		VALUES (?, ?, ?)
 	`,
 	DeleteProjectLinks: `
-		DELETE FROM links WHERE project = ?
+		DELETE FROM links WHERE projectId = ?
 	`,
 }
 

@@ -17,6 +17,8 @@ export class GetClientCount {
      * Connect
      */
     public async connect(): Promise<void> {
+        if(!this.el) return;
+        
         const url = '/count';
     
         this.main.protocol(url);

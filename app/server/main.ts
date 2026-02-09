@@ -1,13 +1,16 @@
 import { GetTimeStream } from "./get-time-stream.js";
 import { GetClientCount } from "./get-client-count.js";
+import { ProjectEditor } from "../project-editor.js";
 
 export class Main {
     private timeStream: GetTimeStream;
     private clientCount: GetClientCount;
+    private projectEditor: ProjectEditor;
 
     constructor() {
         this.timeStream = new GetTimeStream(this);
         this.clientCount = new GetClientCount(this);
+        this.projectEditor = new ProjectEditor(this);
 
         this.connect();
         this.cleanup();

@@ -14,6 +14,8 @@ export class GetTimeStream {
      * Connect
      */
     public async connect(): Promise<void> {
+        if(!this.el) return;
+        
         const url = '/time-stream';
 
         this.main.protocol(url);
