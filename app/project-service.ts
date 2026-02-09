@@ -1,4 +1,4 @@
-import type { Project, CreateProjectRequest } from "./types";
+import type { Project, CreateProjectRequest } from "./types.js";
 
 export class ProjectService {
     private url: string | null = null;
