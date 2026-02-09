@@ -103,7 +103,7 @@ export class ProjectEditor {
             projectContainer.className = 'project-container';
             let mediaHtml = '';
             
-            if (photos.length > 0) {
+            if(photos.length > 0) {
                 mediaHtml += '<div class="project-photos">';
                 photos.forEach(photo => {
                     mediaHtml += `
@@ -117,10 +117,10 @@ export class ProjectEditor {
                 });
                 mediaHtml += '</div>';
             }
-            if (videos.length > 0) {
+            if(videos.length > 0) {
                 mediaHtml += '<div class="project-videos">';
                 videos.forEach(video => {
-                    if (this.isVideoUrl(video.url)) {
+                    if(this.isVideoUrl(video.url)) {
                         mediaHtml += `
                             <div class="video-item">
                                 <video controls width="200">
@@ -135,7 +135,7 @@ export class ProjectEditor {
             }
             
             let linksHtml = '';
-            if (project.links.length > 0) {
+            if(project.links.length > 0) {
                 linksHtml += '<div class="project-links">';
                 project.links.forEach(link => {
                     linksHtml += `
@@ -150,21 +150,27 @@ export class ProjectEditor {
             }
 
             projectContainer.innerHTML = `
-                <h3>${this.escapeHtml(project.name)}</h3>
-                <p class="project-description">${this.escapeHtml(project.desc)}</p>
-                ${mediaHtml}
-                ${project.repo ? `
-                    <div class="project-repo">
-                        <strong>Repository:</strong> 
-                        <a href="${this.escapeHtml(project.repo)}" target="_blank">
-                            ${this.escapeHtml(project.repo)}
-                        </a>
-                    </div>
-                ` : ''}
-                ${linksHtml}
                 <div class="project-metadata">
-                    <small>Created: ${new Date(project.createdAt).toLocaleDateString()}</small>
-                    <small>Updated: ${new Date(project.updatedAt).toLocaleDateString()}</small>
+                    <div id="project-metadata-content">
+                        <small>Created: ${new Date(project.createdAt).toLocaleDateString()}</small>
+                        <small>Updated: ${new Date(project.updatedAt).toLocaleDateString()}</small>
+                    </div>
+                </div>
+                ${mediaHtml}
+                <div class="project-info">
+                    <div id="project-info-content">
+                        <h3>${this.escapeHtml(project.name)}</h3>
+                        ${project.repo ? `
+                            <div class="project-repo">
+                                <strong>Repository:</strong> 
+                                <a href="${this.escapeHtml(project.repo)}" target="_blank">
+                                    ${this.escapeHtml(project.repo)}
+                                </a>
+                            </div>
+                        ` : ''}
+                        <p class="project-description">${this.escapeHtml(project.desc)}</p>
+                        ${linksHtml}
+                    </div>
                 </div>
                 <div class="project-actions">
                     <button class="edit-btn" data-id="${project.id}">Edit</button>

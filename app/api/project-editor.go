@@ -310,12 +310,6 @@ func UpdateProjectHandler(wsServer *ws.Server) http.HandlerFunc {
 		rowsAffected, _ := result.RowsAffected()
 		log.Printf("Project Update successful, rows affected: %d", rowsAffected)
 
-		if err != nil {
-			log.Printf("Project UPDATE error: %v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
 		_, err = txMedia.Exec(db.Q(db.DeleteProjectMedia), id)
 		if err != nil {
 			log.Printf("Delete media error: %v", err)
