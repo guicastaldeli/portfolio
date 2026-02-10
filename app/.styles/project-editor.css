@@ -47,6 +47,12 @@ html, body {
     display: none;
 }
 
+.more-media-indicator {
+    padding: 2rem 1rem;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
 #create-new-btn-container {
     width: 15%;
     min-height: 100%;

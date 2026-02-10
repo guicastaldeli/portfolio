@@ -32,6 +32,12 @@ html, body {
     margin: 0 !important;
 }
 
+.more-media-indicator {
+    padding: 2rem 1rem;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
 #header-content {
     width: 100%;
     height: 100%;

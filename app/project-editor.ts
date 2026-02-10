@@ -100,13 +100,21 @@ export class ProjectEditor {
             const photos = project.media.filter(m => m.type === 'photo');
             const videos = project.media.filter(m => m.type === 'video');
             
+            const MAX_PREVIEW_MEDIA = 3;
+            const allMedia = [...photos, ...videos];
+            const previewMedia = allMedia.slice(0, MAX_PREVIEW_MEDIA);
+            const hasMoreMedia = allMedia.length > MAX_PREVIEW_MEDIA;
+            
             const projectContainer = document.createElement('div');
             projectContainer.className = 'project-container';
             let mediaHtml = '';
             
-            if(photos.length > 0) {
+            const previewPhotos = previewMedia.filter(m => m.type === 'photo');
+            const previewVideos = previewMedia.filter(m => m.type === 'video');
+            
+            if(previewPhotos.length > 0) {
                 mediaHtml += '<div class="project-photos">';
-                photos.forEach(photo => {
+                previewPhotos.forEach(photo => {
                     mediaHtml += `
                         <div class="photo-item">
                             <img src="${this.escapeHtml(photo.url)}" 
@@ -118,9 +126,9 @@ export class ProjectEditor {
                 });
                 mediaHtml += '</div>';
             }
-            if(videos.length > 0) {
+            if(previewVideos.length > 0) {
                 mediaHtml += '<div class="project-videos">';
-                videos.forEach(video => {
+                previewVideos.forEach(video => {
                     const id = this.getVideoId(video.url);
                     if(id) {
                         const thumbnailUrl = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
@@ -148,6 +156,14 @@ export class ProjectEditor {
                     }
                 });
                 mediaHtml += '</div>';
+            }
+            
+            if(hasMoreMedia) {
+                mediaHtml += `
+                    <div class="more-media-indicator">
+                        +${allMedia.length - MAX_PREVIEW_MEDIA} more
+                    </div>
+                `;
             }
             
             let linksHtml = '';
