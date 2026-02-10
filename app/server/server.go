@@ -93,6 +93,5 @@ func Run() *Server {
 	server := NewServer()
 	go server.Start()
 
-	log.Println("Server starting on :3000")
 	return server
 }

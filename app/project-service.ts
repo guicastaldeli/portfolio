@@ -8,7 +8,7 @@ export class ProjectService {
     }
 
     private setUrl(): void {
-        this.url = `${window.location.protocol}//localhost:3000`;
+        this.url = `${window.location.protocol}//${window.location.host}`;
     }
 
     /**

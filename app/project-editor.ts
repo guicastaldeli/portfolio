@@ -121,7 +121,22 @@ export class ProjectEditor {
             if(videos.length > 0) {
                 mediaHtml += '<div class="project-videos">';
                 videos.forEach(video => {
-                    if(this.isVideoUrl(video.url)) {
+                    const id = this.getVideoId(video.url);
+                    if(id) {
+                        const thumbnailUrl = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+                        mediaHtml += `
+                            <div class="video-item">
+                                <a href="${this.escapeHtml(video.url)}" target="_blank" class="video-thumbnail-link">
+                                    <img src="${thumbnailUrl}" 
+                                        alt="Video thumbnail" 
+                                        class="video-thumbnail"
+                                        onerror="this.src='https://img.youtube.com/vi/${id}/hqdefault.jpg'"
+                                    >
+                                    <div class="play-button-overlay">▶</div>
+                                </a>
+                            </div>
+                        `;
+                    } else if(this.isVideoUrl(video.url)) {
                         mediaHtml += `
                             <div class="video-item">
                                 <video controls width="200">
@@ -161,7 +176,7 @@ export class ProjectEditor {
                     <div id="project-main-content">
                         ${mediaHtml}
                         <div id="project-info">
-                            <h3 id="project-name">${this.escapeHtml(project.name)}</h3>
+                            <h3 class="project-name">${this.escapeHtml(project.name)}</h3>
                             ${project.repo ? `
                                 <div class="project-repo">
                                     <strong>Repository:</strong> 
@@ -193,6 +208,21 @@ export class ProjectEditor {
 
             container.appendChild(projectContainer);
         });
+    }
+
+    private getVideoId(url: string): string | null {
+        const patterns = [
+            /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+            /youtube\.com\/shorts\/([^&\n?#]+)/
+        ];
+        
+        for (const pattern of patterns) {
+            const match = url.match(pattern);
+            if (match && match[1]) {
+                return match[1];
+            }
+        }
+        return null;
     }
 
     private isVideoUrl(url: string): boolean {
