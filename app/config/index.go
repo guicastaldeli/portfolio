@@ -48,9 +48,6 @@ func InitIndex() {
 		log.Printf("ERROR: project-editor.html not found at %s", projectEditorPath)
 	}
 
-	// Create file server for static assets
-	fs := http.FileServer(http.Dir(staticDir))
-
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Request: %s %s", r.Method, r.URL.Path)
 
