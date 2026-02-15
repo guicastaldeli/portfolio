@@ -130,8 +130,14 @@ func Exec(
 
 // Init
 func Init() Config {
+	// Get the current working directory
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Fatal("Failed to get working directory:", err)
+	}
+
 	return Config{
-		DataDir: "db/data",
-		SrcDir:  "db/src",
+		DataDir: filepath.Join(wd, "db/data"),
+		SrcDir:  filepath.Join(wd, "db/src"),
 	}
 }
