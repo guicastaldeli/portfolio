@@ -27,6 +27,8 @@ func InitEnv(envDir string) error {
 		instance = &Env{
 			values: make(map[string]string),
 		}
+
+		instance.loadSystemEnv()
 		err = instance.loadEnvFiles(envDir)
 	})
 	return err
@@ -54,37 +56,40 @@ func MustGet(key string) string {
 
 // Load
 func (c *Env) loadEnvFiles(dir string) error {
-	pattern := filepath.Join(dir, ".env*")
-	matches, err := filepath.Glob(pattern)
-	if err != nil {
-		return fmt.Errorf("Failed to read env dir: %w", err)
+	appEnv := os.Getenv("APP_ENV")
+	if appEnv == "" {
+		appEnv = "dev"
 	}
 
-	var files []string
-	for _, match := range matches {
-		info, err := os.Stat(match)
-		if err != nil {
-			log.Printf("Could not stat %s: %v", match, err)
-			continue
-		}
-		if !info.IsDir() {
-			files = append(files, match)
+	log.Printf("APP_ENV: %s", appEnv)
+
+	envFiles := []string{
+		".env",
+		fmt.Sprintf(".env.%s", appEnv),
+	}
+
+	if appEnv == "prod" {
+		envFiles = append(envFiles, ".env.production")
+	}
+
+	var loadedCount int
+
+	for _, envFile := range envFiles {
+		filePath := filepath.Join(dir, envFile)
+		if _, err := os.Stat(filePath); err == nil {
+			if err := c.loadEnvFile(filePath); err != nil {
+				log.Printf("Warning: Failed to load %s: %v", envFile, err)
+			} else {
+				loadedCount++
+				log.Printf("Loaded env file: %s", envFile)
+			}
+		} else {
+			log.Printf("Env file not found: %s (skipping)", envFile)
 		}
 	}
 
-	if len(files) == 0 {
-		log.Printf("No .env files found in %s - using system environment variables", dir)
-		return nil
-	}
-
-	log.Printf("Found %d .env file(s)", len(files))
-
-	for _, file := range files {
-		if err := c.loadEnvFile(file); err != nil {
-			log.Printf("Failed to load %s: %v", file, err)
-			continue
-		}
-		log.Printf("Loaded env file: %s", filepath.Base(file))
+	if loadedCount == 0 {
+		log.Printf("No .env files loaded - using only system environment variables")
 	}
 
 	return nil
@@ -124,4 +129,16 @@ func (c *Env) loadEnvFile(filename string) error {
 	}
 
 	return scanner.Err()
+}
+
+func (c *Env) loadSystemEnv() {
+	for _, env := range os.Environ() {
+		parts := strings.SplitN(env, "=", 2)
+		if len(parts) == 2 {
+			c.mutex.Lock()
+			c.values[parts[0]] = parts[1]
+			c.mutex.Unlock()
+		}
+	}
+	log.Printf("Loaded %d system environment variables", len(c.values))
 }

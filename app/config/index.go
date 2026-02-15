@@ -25,6 +25,7 @@ func InitIndex() {
 			fs.ServeHTTP(w, r)
 			return
 		}
+
 		http.ServeFile(w, r, indexPath)
 	})
 }

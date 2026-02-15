@@ -130,23 +130,19 @@ func Exec(
 
 // Init
 func Init() Config {
-	// Get the current working directory
 	wd, err := os.Getwd()
 	if err != nil {
 		log.Fatal("Failed to get working directory:", err)
 	}
 
-	// Check if we're in the root (with app subdirectory)
 	appDbPath := filepath.Join(wd, "app", "db")
 	if _, err := os.Stat(appDbPath); err == nil {
-		// We're in root, use app/db/src and app/db/data
 		return Config{
 			DataDir: filepath.Join(wd, "app", "db", "data"),
 			SrcDir:  filepath.Join(wd, "app", "db", "src"),
 		}
 	}
 
-	// Fallback to original paths (for local development)
 	return Config{
 		DataDir: filepath.Join(wd, "db", "data"),
 		SrcDir:  filepath.Join(wd, "db", "src"),
