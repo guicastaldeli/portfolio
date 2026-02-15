@@ -52,6 +52,7 @@ func Setup(s *ws.Server) {
 	wsServer = &Server{s}
 
 	InitIndex()
+	InitScripts()
 
 	http.HandleFunc("/ws", wsServer.HandleWebSocket)
 	http.HandleFunc("/hello", EnableCORS(Hello))
