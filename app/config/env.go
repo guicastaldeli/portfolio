@@ -73,7 +73,8 @@ func (c *Env) loadEnvFiles(dir string) error {
 	}
 
 	if len(files) == 0 {
-		return fmt.Errorf("no .env files found in %s (pattern: %s)", dir, pattern)
+		log.Printf("No .env files found in %s - using system environment variables", dir)
+		return nil
 	}
 
 	log.Printf("Found %d .env file(s)", len(files))
