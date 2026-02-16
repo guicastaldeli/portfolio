@@ -11,7 +11,7 @@ class Window {
     init() {
         if (this.vars.APP_ENV === 'prod') {
             this.vars.SERVER_ADDR = `0.0.0.0:${this.vars.PORT}`;
-            this.vars.SERVER_WS = "https://portfolio-server-npwe.onrender.com";
+            this.vars.SERVER_WS = "wss://portfolio-server-npwe.onrender.com/ws";
             this.vars.SERVER_URL = "https://portfolio-server-npwe.onrender.com";
             this.vars.API_URL = "https://portfolio-server-npwe.onrender.com/api";
             this.vars.WEB_URL = "https://portfolio-eight-zeta-19.vercel.app";
