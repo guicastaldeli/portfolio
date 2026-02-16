@@ -6,12 +6,14 @@ export class ProjectService {
     }
     setUrl() {
         this.url = window.vars.SERVER_URL;
+        console.log(this.url);
     }
     /**
      * Get All Projects
      */
     async getAllProjects() {
         const res = await fetch(`${this.url}/api/projects`);
+        console.log(this.url);
         if (!res.ok)
             throw new Error('Failed to fetch projects');
         return res.json();
