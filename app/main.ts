@@ -20,6 +20,7 @@ export class Main {
     }
 
     private async init(): Promise<void> {
+        this.connect();
         await this.projectHandler.connect();
         this.setupHandlers();
         await this.loadProjects();

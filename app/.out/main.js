@@ -8,12 +8,12 @@ export class Main {
     constructor() {
         this.projectService = new ProjectService();
         this.projectHandler = new GetProjectHandler();
-        this.init();
-        this.connect();
-        window.vars.APP_ENV = 'prod';
         window.init();
+        this.init();
+        window.vars.APP_ENV = 'prod';
     }
     async init() {
+        this.connect();
         await this.projectHandler.connect();
         this.setupHandlers();
         await this.loadProjects();
