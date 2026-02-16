@@ -12,15 +12,14 @@ export class Main {
         this.projectService = new ProjectService();
         this.projectHandler = new GetProjectHandler();
 
-        
-        window.init();
         this.init();
+        this.connect();
 
         window.vars.APP_ENV = 'prod';
+        window.init();
     }
 
     private async init(): Promise<void> {
-        this.connect();
         await this.projectHandler.connect();
         this.setupHandlers();
         await this.loadProjects();
