@@ -6,10 +6,10 @@ export class Main {
     projectHandler;
     currentProjects = [];
     constructor() {
-        this.projectService = new ProjectService();
-        this.projectHandler = new GetProjectHandler();
         window.vars.APP_ENV = 'prod';
         window.init();
+        this.projectService = new ProjectService();
+        this.projectHandler = new GetProjectHandler();
         this.init();
         this.connect();
     }

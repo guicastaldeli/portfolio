@@ -9,12 +9,12 @@ export class Main {
     private currentProjects: Project[] = [];
 
     constructor() {
+        window.vars.APP_ENV = 'prod';
+        window.init();
+
         this.projectService = new ProjectService();
         this.projectHandler = new GetProjectHandler();
 
-        window.vars.APP_ENV = 'prod';
-        window.init();
-        
         this.init();
         this.connect();
     }
