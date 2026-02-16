@@ -19,6 +19,8 @@ html, body {
     align-items: center;
     justify-content: center;
 
+    position: relative;
+    top: 6%;
     gap: 0.8rem;
 }
 
@@ -326,28 +328,9 @@ html, body {
     text-decoration: underline;
 }
 
-/* FIXED: Added proper text wrapping for modal descriptions */
 .modal-description p {
     color: #2c2c2c;
-    white-space: normal !important;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 0 10px 0 !important;
-    line-height: 1.6;
-}
-
-.modal-description {
-    width: 100%;
-    max-width: 100%;
-}
-
-/* Force any child elements to behave */
-.modal-description * {
-    max-width: 100% !important;
-    white-space: normal !important;
-    word-wrap: break-word !important;
+    white-space: pre-wrap;
 }
 
 .modal-photos {
