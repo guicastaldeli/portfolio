@@ -9,7 +9,7 @@ export class Main {
     private projectEditor: ProjectEditor;
 
     constructor() {
-        //window.vars.APP_ENV = 'prod';
+        window.vars.APP_ENV = 'prod';
         window.init();
         
         this.timeStream = new GetTimeStream(this);
