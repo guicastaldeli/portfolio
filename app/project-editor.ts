@@ -93,7 +93,11 @@ export class ProjectEditor {
         container.innerHTML = '';
 
         if(!this.currentProjects || this.currentProjects.length === 0) {
-            container.innerHTML = '<p>No projects yet. Create one!</p>';
+            container.innerHTML = `
+                <div id="empty-container">
+                    <p id="empty">No projects yet.</p>
+                </div>
+            `;
             return;
         }
 

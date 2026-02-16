@@ -9,7 +9,7 @@ export class Main {
     private currentProjects: Project[] = [];
 
     constructor() {
-        window.vars.APP_ENV = 'prod';
+        //window.vars.APP_ENV = 'prod';
         window.init();
 
         this.projectService = new ProjectService();
@@ -221,7 +221,11 @@ export class Main {
 
         if(!this.currentProjects || this.currentProjects.length === 0) {
             console.log('No projects to display');
-            container.innerHTML = '<p>No projects yet.</p>';
+            container.innerHTML = `
+                <div id="empty-container">
+                    <p id="empty">No projects yet.</p>
+                </div>
+            `;
             return;
         }
 
