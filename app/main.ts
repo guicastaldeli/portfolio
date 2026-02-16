@@ -11,6 +11,7 @@ export class Main {
         this.projectService = new ProjectService();
         this.projectHandler = new GetProjectHandler();
         this.init();
+        this.connect();
     }
 
     private async init(): Promise<void> {
@@ -18,6 +19,11 @@ export class Main {
         this.setupHandlers();
         await this.loadProjects();
         this.createModal();
+    }
+
+    private connect(): WebSocket {
+        const ws = new WebSocket(window.SERVER_WS);
+        return ws;
     }
 
     /**

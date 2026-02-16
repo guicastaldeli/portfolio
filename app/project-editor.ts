@@ -18,9 +18,6 @@ export class ProjectEditor {
 
         this.projectService = new ProjectService();
         this.projectHandler = new GetProjectHandler();
-        
-        this.init();
-        this.setLink();
     }
 
     private setLink() {
@@ -36,7 +33,12 @@ export class ProjectEditor {
      * Init
      * 
      */
-    private async init(): Promise<void> {
+    public async init() {
+        await this.set();
+        this.setLink();
+    }
+
+    private async set(): Promise<void> {
         await this.projectHandler.connect();
         this.setupHandlers();
 

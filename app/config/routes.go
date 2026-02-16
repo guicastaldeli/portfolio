@@ -51,8 +51,8 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 func Setup(s *ws.Server) {
 	wsServer = &Server{s}
 
-	InitIndex()
 	InitScripts()
+	InitIndex()
 
 	http.HandleFunc("/ws", wsServer.HandleWebSocket)
 	http.HandleFunc("/hello", EnableCORS(Hello))

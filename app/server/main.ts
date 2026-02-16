@@ -35,6 +35,7 @@ export class Main {
     private async connect(): Promise<void> {
         await this.timeStream.connect();
         await this.clientCount.connect();
+        await this.projectEditor.init();
     }
 
     /**
