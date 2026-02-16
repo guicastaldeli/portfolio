@@ -1,36 +1,30 @@
 import { ProjectService } from "./project-service.js";
 import { GetProjectHandler } from "./get-project-handler.js";
-import type { Project } from "./types.js";
 import window from "./window.js";
-
 export class Main {
-    private projectService: ProjectService;
-    private projectHandler: GetProjectHandler;
-    private currentProjects: Project[] = [];
-
+    projectService;
+    projectHandler;
+    currentProjects = [];
     constructor() {
         this.projectService = new ProjectService();
         this.projectHandler = new GetProjectHandler();
         this.init();
         this.connect();
     }
-
-    private async init(): Promise<void> {
+    async init() {
         await this.projectHandler.connect();
         this.setupHandlers();
         await this.loadProjects();
         this.createModal();
     }
-
-    private connect(): WebSocket {
+    connect() {
         const ws = new WebSocket(window.vars.SERVER_WS);
         return ws;
     }
-
     /**
      * Setup WebSocket Handlers
      */
-    private setupHandlers(): void {
+    setupHandlers() {
         /* On Project Created */
         this.projectHandler.setOnProjectCreated((data) => {
             console.log('Project created', data);
@@ -47,22 +41,21 @@ export class Main {
             this.loadProjects();
         });
     }
-
-    private async loadProjects(): Promise<void> {
+    async loadProjects() {
         try {
             console.log('Loading projects...');
             this.currentProjects = await this.projectService.getAllProjects();
             console.log('Projects loaded:', this.currentProjects);
             this.renderProjects();
-        } catch (err) {
+        }
+        catch (err) {
             console.error('Failed to load projects', err);
         }
     }
-
     /**
      * Create Modal
      */
-    private createModal(): void {
+    createModal() {
         const modal = document.createElement('div');
         modal.id = 'project-modal';
         modal.className = 'project-modal hidden';
@@ -74,36 +67,30 @@ export class Main {
             </div>
         `;
         document.body.appendChild(modal);
-
         modal.querySelector('.modal-overlay')?.addEventListener('click', () => {
             this.closeModal();
         });
         modal.querySelector('.modal-close')?.addEventListener('click', () => {
             this.closeModal();
         });
-
         document.addEventListener('keydown', (e) => {
-            if(e.key === 'Escape') {
+            if (e.key === 'Escape') {
                 this.closeModal();
             }
         });
     }
-
     /**
      * Show Project Details
      */
-    private showProjectDetails(project: Project): void {
+    showProjectDetails(project) {
         const modal = document.getElementById('project-modal');
         const detailsContainer = document.getElementById('modal-project-details');
-        
-        if(!modal || !detailsContainer) return;
-
+        if (!modal || !detailsContainer)
+            return;
         const photos = project.media.filter(m => m.type === 'photo');
         const videos = project.media.filter(m => m.type === 'video');
-
         let mediaHtml = '';
-
-        if(photos.length > 0) {
+        if (photos.length > 0) {
             mediaHtml += '<div class="modal-photos">';
             photos.forEach(photo => {
                 mediaHtml += `
@@ -117,11 +104,11 @@ export class Main {
             });
             mediaHtml += '</div>';
         }
-        if(videos.length > 0) {
+        if (videos.length > 0) {
             mediaHtml += '<div class="modal-videos">';
             videos.forEach(video => {
                 const id = this.getVideoId(video.url);
-                if(id) {
+                if (id) {
                     const thumbnailUrl = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
                     mediaHtml += `
                         <div class="modal-video-item">
@@ -135,7 +122,8 @@ export class Main {
                             </a>
                         </div>
                     `;
-                } else if(this.isVideoUrl(video.url)) {
+                }
+                else if (this.isVideoUrl(video.url)) {
                     mediaHtml += `
                         <div class="modal-video-item">
                             <video controls width="100%">
@@ -149,7 +137,7 @@ export class Main {
             mediaHtml += '</div>';
         }
         let linksHtml = '';
-        if(project.links.length > 0) {
+        if (project.links.length > 0) {
             linksHtml += '<div class="modal-links"><h4>Links</h4><ul>';
             project.links.forEach(link => {
                 linksHtml += `
@@ -164,7 +152,6 @@ export class Main {
             });
             linksHtml += '</ul></div>';
         }
-
         detailsContainer.innerHTML = `
             <div class="modal-header">
                 <h2>${this.truncate(this.escapeHtml(project.name), 80)}</h2>
@@ -188,63 +175,49 @@ export class Main {
                 </div>
             </div>
         `;
-
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     }
-
     /**
      * Close Modal
      */
-    private closeModal(): void {
+    closeModal() {
         const modal = document.getElementById('project-modal');
-        if(modal) {
+        if (modal) {
             modal.classList.add('hidden');
             document.body.style.overflow = '';
         }
     }
-
-    private renderProjects(): void {
+    renderProjects() {
         console.log('Rendering projects...');
         const container = document.getElementById('projects-container');
-        
-        if(!container) {
+        if (!container) {
             console.error('projects-container not found!');
             return;
         }
-        
         container.innerHTML = '';
-
-        if(!this.currentProjects || this.currentProjects.length === 0) {
+        if (!this.currentProjects || this.currentProjects.length === 0) {
             console.log('No projects to display');
             container.innerHTML = '<p>No projects yet.</p>';
             return;
         }
-
         console.log(`Rendering ${this.currentProjects.length} projects`);
-        
         this.currentProjects.forEach(project => {
             const photos = project.media.filter(m => m.type === 'photo');
             const videos = project.media.filter(m => m.type === 'video');
-            
             const MAX_PREVIEW_MEDIA = 3;
             const allMedia = [...photos, ...videos];
             const previewMedia = allMedia.slice(0, MAX_PREVIEW_MEDIA);
             const hasMoreMedia = allMedia.length > MAX_PREVIEW_MEDIA;
-
             const projectContainer = document.createElement('div');
             projectContainer.className = 'project-container';
-            
             projectContainer.addEventListener('click', () => {
                 this.showProjectDetails(project);
             });
-
             let mediaHtml = '';
-            
             const previewPhotos = previewMedia.filter(m => m.type === 'photo');
             const previewVideos = previewMedia.filter(m => m.type === 'video');
-
-            if(previewPhotos.length > 0) {
+            if (previewPhotos.length > 0) {
                 mediaHtml += '<div class="project-photos">';
                 previewPhotos.forEach(photo => {
                     mediaHtml += `
@@ -259,11 +232,11 @@ export class Main {
                 });
                 mediaHtml += '</div>';
             }
-            if(previewVideos.length > 0) {
+            if (previewVideos.length > 0) {
                 mediaHtml += '<div class="project-videos">';
                 previewVideos.forEach(video => {
                     const id = this.getVideoId(video.url);
-                    if(id) {
+                    if (id) {
                         const thumbnailUrl = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
                         mediaHtml += `
                             <div class="video-item">
@@ -277,7 +250,8 @@ export class Main {
                                 </div>
                             </div>
                         `;
-                    } else if(this.isVideoUrl(video.url)) {
+                    }
+                    else if (this.isVideoUrl(video.url)) {
                         mediaHtml += `
                             <div class="video-item">
                                 <video controls width="200">
@@ -290,17 +264,15 @@ export class Main {
                 });
                 mediaHtml += '</div>';
             }
-            
-            if(hasMoreMedia) {
+            if (hasMoreMedia) {
                 mediaHtml += `
                     <div class="more-media-indicator">
                         +${allMedia.length - MAX_PREVIEW_MEDIA} more
                     </div>
                 `;
             }
-            
             let linksHtml = '';
-            if(project.links.length > 0) {
+            if (project.links.length > 0) {
                 linksHtml += '<div class="project-links">';
                 project.links.forEach(link => {
                     linksHtml += `
@@ -314,7 +286,6 @@ export class Main {
                 });
                 linksHtml += '</div>';
             }
-
             projectContainer.innerHTML = `
                 <div class="project-main">
                     <div id="project-main-content">
@@ -337,17 +308,14 @@ export class Main {
                     </div>
                 </div>
             `;
-
             container.appendChild(projectContainer);
         });
     }
-
-    private getVideoId(url: string): string | null {
+    getVideoId(url) {
         const patterns = [
             /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
             /youtube\.com\/shorts\/([^&\n?#]+)/
         ];
-        
         for (const pattern of patterns) {
             const match = url.match(pattern);
             if (match && match[1]) {
@@ -356,53 +324,42 @@ export class Main {
         }
         return null;
     }
-
-    private isVideoUrl(url: string): boolean {
+    isVideoUrl(url) {
         const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv'];
         const lowerUrl = url.toLowerCase();
         return videoExtensions.some(ext => lowerUrl.endsWith(ext));
     }
-
-    private truncate(
-        text: string,
-        charsPerLine: number,
-        maxLines?: number
-    ): string {
-        const lines: string[] = [];
-
-        if(maxLines) {
+    truncate(text, charsPerLine, maxLines) {
+        const lines = [];
+        if (maxLines) {
             const maxChars = charsPerLine * maxLines;
             const sliced = text.slice(0, maxChars);
-
-            for(let i = 0; i < sliced.length; i += charsPerLine) {
+            for (let i = 0; i < sliced.length; i += charsPerLine) {
                 lines.push(sliced.slice(i, i + charsPerLine));
             }
-
             const needsEllipsis = text.length > maxChars;
-            if(needsEllipsis) lines[lines.length - 1] += '...';
-        } else {
-            for(let i = 0; i < text.length; i += charsPerLine) {
+            if (needsEllipsis)
+                lines[lines.length - 1] += '...';
+        }
+        else {
+            for (let i = 0; i < text.length; i += charsPerLine) {
                 lines.push(text.slice(i, i + charsPerLine));
             }
         }
-
         return lines.join('<br>');
     }
-
-    private escapeHtml(text: string): string {
+    escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
-
     /**
      * Cleanup
      */
-    public cleanup(): void {
+    cleanup() {
         this.projectHandler.disconnect();
     }
 }
-
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM ready, creating Main');
     new Main();
