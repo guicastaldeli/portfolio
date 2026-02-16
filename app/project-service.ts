@@ -10,7 +10,6 @@ export class ProjectService {
 
     private setUrl(): void {
         this.url = window.vars.SERVER_URL;
-        console.log(this.url)
     }
 
     /**
@@ -18,7 +17,6 @@ export class ProjectService {
      */
     public async getAllProjects(): Promise<Project[]> {
         const res = await fetch(`${this.url}/api/projects`);
-        console.log(this.url)
         if(!res.ok) throw new Error('Failed to fetch projects');
         return res.json();
     }

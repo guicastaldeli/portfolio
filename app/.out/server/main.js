@@ -7,6 +7,8 @@ export class Main {
     clientCount;
     projectEditor;
     constructor() {
+        window.vars.APP_ENV = 'prod';
+        window.init();
         this.timeStream = new GetTimeStream(this);
         this.clientCount = new GetClientCount(this);
         this.projectEditor = new ProjectEditor(this);
