@@ -11,10 +11,12 @@ export class Main {
     constructor() {
         this.projectService = new ProjectService();
         this.projectHandler = new GetProjectHandler();
+
         this.init();
         this.connect();
-        window.vars.APP_ENV = 'prod';
+
         window.init();
+        window.vars.APP_ENV = 'prod';
     }
 
     private async init(): Promise<void> {
