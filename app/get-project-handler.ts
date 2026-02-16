@@ -21,7 +21,6 @@ export class GetProjectHandler {
     public async connect(): Promise<void> {
         return new Promise((res, rej) => {
             const wsUrl = window.vars.SERVER_WS;
-
             this.ws = new WebSocket(wsUrl);
             this.ws.onopen = () => {
                 this.subscribe('projects');

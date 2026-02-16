@@ -1,6 +1,7 @@
 import { GetTimeStream } from "./get-time-stream.js";
 import { GetClientCount } from "./get-client-count.js";
 import { ProjectEditor } from "../project-editor.js";
+import window from "../window.js";
 
 export class Main {
     private timeStream: GetTimeStream;
@@ -22,8 +23,7 @@ export class Main {
      * 
      */
     public protocol(url: string): string {
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${protocol}//${window.location.host}/${url}`;
+        const wsUrl = window.vars.SERVER_WS;
         return wsUrl;
     }
 
@@ -42,7 +42,7 @@ export class Main {
      * Cleanup
      */
     private cleanup(): void {
-        window.addEventListener('beforeunload', () => {
+        document.addEventListener('beforeunload', () => {
             if(this.timeStream.ws) this.timeStream.ws.close();
             if(this.clientCount.ws) this.clientCount.ws.close();
         });
