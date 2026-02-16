@@ -1,3 +1,4 @@
+import window from "./window.js";
 var MessageType;
 (function (MessageType) {
     MessageType["PROJECT_CREATED"] = "project_created";
@@ -16,8 +17,7 @@ export class GetProjectHandler {
      */
     async connect() {
         return new Promise((res, rej) => {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsUrl = `${protocol}//${window.location.host}/ws`;
+            const wsUrl = window.vars.SERVER_WS;
             this.ws = new WebSocket(wsUrl);
             this.ws.onopen = () => {
                 this.subscribe('projects');

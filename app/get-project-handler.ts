@@ -1,4 +1,5 @@
 import { WebSocketMessage } from "./types.js";
+import window from "./window.js";
 
 enum MessageType {
     PROJECT_CREATED = 'project_created',
@@ -19,8 +20,7 @@ export class GetProjectHandler {
      */
     public async connect(): Promise<void> {
         return new Promise((res, rej) => {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsUrl = `${protocol}//${window.location.host}/ws`;
+            const wsUrl = window.vars.SERVER_WS;
 
             this.ws = new WebSocket(wsUrl);
             this.ws.onopen = () => {
