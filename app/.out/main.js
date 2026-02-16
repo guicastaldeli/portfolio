@@ -11,6 +11,7 @@ export class Main {
         this.init();
         this.connect();
         window.vars.APP_ENV = 'prod';
+        window.init();
     }
     async init() {
         await this.projectHandler.connect();

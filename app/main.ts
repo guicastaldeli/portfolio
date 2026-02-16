@@ -14,6 +14,7 @@ export class Main {
         this.init();
         this.connect();
         window.vars.APP_ENV = 'prod';
+        window.init();
     }
 
     private async init(): Promise<void> {

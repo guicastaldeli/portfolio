@@ -9,10 +9,6 @@ class Window {
         WEB_URL: ''
     }
 
-    constructor() {
-        this.init();
-    }
-
     init() {
         if(this.vars.APP_ENV === 'prod') {
             this.vars.SERVER_ADDR=`0.0.0.0:${this.vars.PORT}`
