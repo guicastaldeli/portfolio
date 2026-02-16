@@ -24,6 +24,7 @@ export class Main {
         this.setupHandlers();
         await this.loadProjects();
         this.createModal();
+        this.setupImageOverlay();
     }
 
     private connect(): WebSocket {
@@ -188,13 +189,56 @@ export class Main {
                 
                 <div class="modal-description">
                     <h4>Description</h4>
-                    <p>${this.truncate(this.escapeHtml(project.desc), 80)}</p>
+                    <p>${this.escapeHtml(project.desc)}</p>
                 </div>
             </div>
         `;
 
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
+    }
+
+    /**
+     * Setup Image Overlay
+     */
+    private setupImageOverlay(): void {
+        const overlay = document.createElement('div');
+        overlay.className = 'image-overlay';
+        overlay.innerHTML = '<img src="" alt="Full size image">';
+        document.body.appendChild(overlay);
+
+        const overlayImg = overlay.querySelector('img') as HTMLImageElement;
+
+        overlay.addEventListener('click', () => {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        overlayImg.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        // Add click handlers to all images
+        document.addEventListener('click', (e) => {
+            const target = e.target as HTMLElement;
+            
+            if(target.tagName === 'IMG' && target.closest('.modal-photo-item')) {
+                
+                const img = target as HTMLImageElement;
+                overlayImg.src = img.src;
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                
+                e.stopPropagation();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && overlay.classList.contains('active')) {
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
     }
 
     /**
@@ -358,7 +402,7 @@ export class Main {
         
         for (const pattern of patterns) {
             const match = url.match(pattern);
-            if (match && match[1]) {
+            if(match && match[1]) {
                 return match[1];
             }
         }
