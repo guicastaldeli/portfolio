@@ -23,7 +23,7 @@ export class Main {
      * 
      */
     public protocol(url: string): string {
-        const wsUrl = window.vars.SERVER_WS;
+        const wsUrl = `${window.vars.SERVER_URL}/${url}`;
         return wsUrl;
     }
 
