@@ -10,6 +10,7 @@ export class Main {
         this.projectHandler = new GetProjectHandler();
         this.init();
         this.connect();
+        window.vars.APP_ENV = 'prod';
     }
     async init() {
         await this.projectHandler.connect();
