@@ -383,7 +383,7 @@ export class Main {
                                     </a>
                                 </div>
                             ` : ''}
-                            <p class="project-description">${this.truncate(this.escapeHtml(project.desc), 25, 3)}</p>
+                            <p class="project-description">${this.truncate(this.escapeHtml(project.desc), 90, 3)}</p>
                             ${linksHtml}
                         </div>
                     </div>

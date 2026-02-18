@@ -730,7 +730,7 @@ html, body {
 .modal-photo-item img,
 .photo-item img {
     cursor: default;
-    transition: all 0.2s ease;
+    transition: all 0.05s ease;
 }
 
 .modal-photo-item img:hover,
