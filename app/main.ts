@@ -9,7 +9,7 @@ export class Main {
     private currentProjects: Project[] = [];
 
     constructor() {
-        window.vars.APP_ENV = 'prod';
+        window.vars.APP_ENV = 'dev';
         window.init();
 
         this.projectService = new ProjectService();
