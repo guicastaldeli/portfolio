@@ -207,7 +207,11 @@ export class ProjectEditor {
                                     </a>
                                 </div>
                             ` : ''}
-                            <p class="project-description">${this.truncate(this.escapeHtml(project.desc), 25, 3)}</p>
+                            <div class="project-description-container">
+                                <div id="project-description-content-container">
+                                    <p id="project-description-content">${this.escapeHtml(project.desc)}</p>
+                                </div>
+                            </div>
                             ${linksHtml}
                         </div>
                     </div>
@@ -251,25 +255,6 @@ export class ProjectEditor {
         const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv'];
         const lowerUrl = url.toLowerCase();
         return videoExtensions.some(ext => lowerUrl.endsWith(ext));
-    }
-
-    private truncate(
-        text: string,
-        charsPerLine: number, 
-        maxLines: number
-    ): string {
-        const maxChars = charsPerLine * maxLines;
-        const sliced = text.slice(0, maxChars);
-        const lines: string[] = [];
-
-        for(let i = 0; i < sliced.length; i += charsPerLine) {
-            lines.push(sliced.slice(i, i + charsPerLine));
-        }
-
-        const needsEllipsis = text.length > maxChars;
-        if(needsEllipsis) lines[lines.length - 1] += '...';
-
-        return lines.join('<br>');
     }
 
     /**

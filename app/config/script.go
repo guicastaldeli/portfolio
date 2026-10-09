@@ -13,26 +13,17 @@ func InitScripts() {
 		log.Printf("Warning: Could not get working directory: %v", err)
 		wd = "."
 	}
-
-	var jsPath string
-	var cssPath string
-
 	appPath := filepath.Join(wd, "app")
+	outDir := filepath.Join(wd, "..", ".out")
 
-	log.Printf("JS path: %s", jsPath)
-	log.Printf("CSS path: %s", cssPath)
+	log.Printf("** Working directory: %s", wd)
+	log.Printf("** Out directory: %s", outDir)
 
+	// Scripts
 	http.HandleFunc("/scripts/", func(w http.ResponseWriter, r *http.Request) {
 		requestedPath := r.URL.Path[len("/scripts/"):]
-
-		var fullPath string
-		if _, err := os.Stat(appPath); err == nil {
-			fullPath = filepath.Join(wd, ".out", requestedPath)
-		} else {
-			fullPath = filepath.Join(wd, ".out", requestedPath)
-		}
-
-		log.Printf("Serving style: %s from %s", requestedPath, fullPath)
+		fullPath := filepath.Join(outDir, requestedPath)
+		log.Printf("Serving script: %s from %s", requestedPath, fullPath)
 
 		if _, err := os.Stat(fullPath); err != nil {
 			log.Printf("File not found: %s", fullPath)
@@ -47,6 +38,7 @@ func InitScripts() {
 
 		http.ServeFile(w, r, fullPath)
 	})
+	// Styles
 	http.HandleFunc("/styles/", func(w http.ResponseWriter, r *http.Request) {
 		requestedPath := r.URL.Path[len("/styles/"):]
 

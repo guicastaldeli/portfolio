@@ -1,5 +1,5 @@
+import { GetEnv } from "./env.js";
 import { WebSocketMessage } from "./types.js";
-import window from "./window.js";
 
 enum MessageType {
     PROJECT_CREATED = 'project_created',
@@ -20,7 +20,12 @@ export class GetProjectHandler {
      */
     public async connect(): Promise<void> {
         return new Promise((res, rej) => {
-            const wsUrl = window.vars.SERVER_WS;
+            const wsUrl = GetEnv('SERVER_WS');
+            if(!wsUrl) {
+                rej(new Error('not set'));
+                return;
+            }
+            
             this.ws = new WebSocket(wsUrl);
             this.ws.onopen = () => {
                 this.subscribe('projects');

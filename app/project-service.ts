@@ -1,15 +1,9 @@
+import { GetEnv } from "./env.js";
 import type { Project, CreateProjectRequest } from "./types.js";
-import window from "./window.js";
 
 export class ProjectService {
-    private url: string | null = null;
-
-    constructor() {
-        this.setUrl();
-    }
-
-    private setUrl(): void {
-        this.url = window.vars.SERVER_URL;
+    private get url(): string {
+        return GetEnv('SERVER_URL') ?? '';
     }
 
     /**

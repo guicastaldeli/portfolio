@@ -1,7 +1,7 @@
 import { GetTimeStream } from "./get-time-stream.js";
 import { GetClientCount } from "./get-client-count.js";
 import { ProjectEditor } from "../project-editor.js";
-import window from "../window.js";
+import { Env, GetEnv } from "../env.js";
 
 export class Main {
     private timeStream: GetTimeStream;
@@ -9,15 +9,23 @@ export class Main {
     private projectEditor: ProjectEditor;
 
     constructor() {
-        window.vars.APP_ENV = 'dev';
-        window.init();
-        
         this.timeStream = new GetTimeStream(this);
         this.clientCount = new GetClientCount(this);
         this.projectEditor = new ProjectEditor(this);
 
+        this.start();
+
         this.connect();
         this.cleanup();
+    }
+
+    /**
+     * 
+     * Start
+     * 
+     */
+    private async start(): Promise<void> {
+        await Env.Ready();
     }
 
     /**
@@ -26,8 +34,9 @@ export class Main {
      * 
      */
     public protocol(url: string): string {
-        const wsUrl = `${window.vars.SERVER_URL}/${url}`;
-        return wsUrl;
+        const base = GetEnv('SERVER_URL') ?? '';
+        const val = `${base}/${url}`;
+        return val;
     }
 
     /**

@@ -1,7 +1,7 @@
 import { ProjectService } from "./project-service.js";
 import { GetProjectHandler } from "./get-project-handler.js";
 import type { Project } from "./types.js";
-import window from "./window.js";
+import { Env, GetEnv } from "./env.js";
 
 export class Main {
     private projectService: ProjectService;
@@ -9,8 +9,7 @@ export class Main {
     private currentProjects: Project[] = [];
 
     constructor() {
-        window.vars.APP_ENV = 'dev';
-        window.init();
+        this.start();
 
         this.projectService = new ProjectService();
         this.projectHandler = new GetProjectHandler();
@@ -19,6 +18,20 @@ export class Main {
         this.connect();
     }
 
+    /**
+     * 
+     * Start
+     * 
+     */
+    private async start(): Promise<void> {
+        await Env.Ready();
+    }
+
+    /**
+     * 
+     * Init
+     * 
+     */
     private async init(): Promise<void> {
         await this.projectHandler.connect();
         this.setupHandlers();
@@ -27,9 +40,15 @@ export class Main {
         this.setupImageOverlay();
     }
 
+    /**
+     * 
+     * Connect
+     * 
+     */
     private connect(): WebSocket {
-        const ws = new WebSocket(window.vars.SERVER_WS);
-        return ws;
+        const ws = GetEnv('SERVER_WS');
+        if(!ws) throw new Error('not set');
+        return new WebSocket(ws);
     }
 
     /**
@@ -53,6 +72,9 @@ export class Main {
         });
     }
 
+    /**
+     * Load Projects
+     */
     private async loadProjects(): Promise<void> {
         try {
             console.log('Loading projects...');
@@ -383,7 +405,11 @@ export class Main {
                                     </a>
                                 </div>
                             ` : ''}
-                            <p class="project-description">${this.truncate(this.escapeHtml(project.desc), 90, 3)}</p>
+                            <div class="project-description-container">
+                                <div id="project-description-content-container">
+                                    <p id="project-description-content">${this.escapeHtml(project.desc)}</p>
+                                </div>
+                            </div>
                             ${linksHtml}
                         </div>
                     </div>
