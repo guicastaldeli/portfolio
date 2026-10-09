@@ -27,7 +27,7 @@ func InitScripts() {
 
 		var fullPath string
 		if _, err := os.Stat(appPath); err == nil {
-			fullPath = filepath.Join(wd, "app", ".out", requestedPath)
+			fullPath = filepath.Join(wd, ".out", requestedPath)
 		} else {
 			fullPath = filepath.Join(wd, ".out", requestedPath)
 		}
@@ -52,9 +52,9 @@ func InitScripts() {
 
 		var fullPath string
 		if _, err := os.Stat(appPath); err == nil {
-			fullPath = filepath.Join(wd, "app", ".styles", requestedPath)
+			fullPath = filepath.Join(wd, "app", "styles", requestedPath)
 		} else {
-			fullPath = filepath.Join(wd, ".styles", requestedPath)
+			fullPath = filepath.Join(wd, "styles", requestedPath)
 		}
 
 		log.Printf("Serving style: %s from %s", requestedPath, fullPath)
