@@ -13,9 +13,6 @@ export class Main {
 
         this.projectService = new ProjectService();
         this.projectHandler = new GetProjectHandler();
-
-        this.init();
-        this.connect();
     }
 
     /**
@@ -25,6 +22,8 @@ export class Main {
      */
     private async start(): Promise<void> {
         await Env.Ready();
+        await this.init();
+        this.connect();
     }
 
     /**

@@ -14,9 +14,6 @@ export class Main {
         this.projectEditor = new ProjectEditor(this);
 
         this.start();
-
-        this.connect();
-        this.cleanup();
     }
 
     /**
@@ -26,6 +23,8 @@ export class Main {
      */
     private async start(): Promise<void> {
         await Env.Ready();
+        await this.connect();
+        this.cleanup();
     }
 
     /**

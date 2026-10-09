@@ -61,4 +61,23 @@ func InitScripts() {
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 		http.ServeFile(w, r, fullPath)
 	})
+	// Env
+	http.HandleFunc("/env/config", func(w http.ResponseWriter, r *http.Request) {
+		appEnv := os.Getenv("APP_ENV")
+		if appEnv == "" {
+			appEnv = "dev"
+		}
+
+		wd, _ := os.Getwd()
+		fullPath := filepath.Join(wd, ".env", ".env."+appEnv)
+
+		if _, err := os.Stat(fullPath); err != nil {
+			http.NotFound(w, r)
+			return
+		}
+
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		http.ServeFile(w, r, fullPath)
+	})
 }
