@@ -23,7 +23,7 @@ export function ParseEnv(text: string): Record<string, string> {
 
         let value = line.slice(eq + 1).trim();
         if((value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.startsWith("'"))) {
+            (value.startsWith("'") && value.endsWith("'"))) {
             value = value.slice(1, -1);
         }
         

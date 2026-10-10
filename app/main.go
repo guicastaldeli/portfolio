@@ -30,9 +30,12 @@ func logs() {
 func main() {
 	log.SetFlags(0)
 
-	if err := config.InitEnv(".env"); err != nil {
+	env := ".env"
+	if err := config.InitEnv(env); err != nil {
 		log.Fatal("Failed to load env config", err)
 	}
+
+	config.GenerateTemp()
 
 	serverAddr := config.GetEnv("SERVER_ADDR")
 	logs()
