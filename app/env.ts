@@ -4,8 +4,8 @@ let cache: Record<string, string> | null = null;
 let loading: Promise<void> | null = null;
 
 let ENV_KEY = '';
+const KEY_ADDR = '/app/.env/env.key';
 const ENV_URL = '/env/env.temp';
-const KEY_URL = '/env/env.key';
 
 export function GetEnv(key: string): string | undefined {
     const val = cache?.[key];
@@ -46,14 +46,12 @@ async function Load(): Promise<void> {
 
     loading = (async () => {
         try {
-            const keyRes = await fetch(KEY_URL, { cache: 'no-store' });
-            if(!keyRes.ok) throw new Error(`HTTP ${keyRes.status} for ${KEY_URL}`);
-
+            const keyRes = await fetch(KEY_ADDR, { cache: 'no-store' });
+            if(!keyRes.ok) throw new Error(`HTTP ${keyRes.status} for ${KEY_ADDR}`);
             ENV_KEY = (await keyRes.text()).trim();
 
             const res = await fetch(ENV_URL, { cache: 'no-store' });
             if(!res.ok) throw new Error(`HTTP ${res.status} for ${ENV_URL}`);
-
             const text = await res.text();
             const plaintext = await decrypt(text);
             cache = ParseEnv(plaintext);
