@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	"main/auth"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -16,16 +17,19 @@ func InitIndex() {
 
 	log.Printf("Working directory: %s", wd)
 
+	var authPath string
 	var indexPath string
 	var projectEditorPath string
 	var staticDir string
 
 	appPath := filepath.Join(wd, "app")
 	if _, err := os.Stat(appPath); err == nil {
+		authPath = filepath.Join(staticDir, "app", "server", "auth.html")
 		indexPath = filepath.Join(wd, "app", "server", "index.html")
 		projectEditorPath = filepath.Join(wd, "app", "server", "project-editor.html")
 		staticDir = filepath.Join(wd, "app", "server")
 	} else {
+		authPath = filepath.Join(staticDir, "server", "auth.html")
 		indexPath = filepath.Join(wd, "server", "index.html")
 		projectEditorPath = filepath.Join(wd, "server", "project-editor.html")
 		staticDir = filepath.Join(wd, "server")
@@ -49,12 +53,29 @@ func InitIndex() {
 		w.Header().Set("Pragma", "no-cache")
 		w.Header().Set("Expires", "0")
 
+		// Auth
+		if r.URL.Path == "/auth" || r.URL.Path == "/auth/" {
+			http.ServeFile(w, r, authPath)
+			return
+		}
+		// Editor
 		if r.URL.Path == "/editor" || r.URL.Path == "/editor/" {
+			if !auth.IsAuthed(r) {
+				http.Redirect(w, r, "/auth", http.StatusFound)
+				return
+			}
+
 			log.Printf("Serving editor page")
 			http.ServeFile(w, r, projectEditorPath)
 			return
 		}
+		// Home
 		if r.URL.Path == "/" {
+			if !auth.IsAuthed(r) {
+				http.Redirect(w, r, "/auth", http.StatusFound)
+				return
+			}
+
 			log.Printf("Serving index page")
 			http.ServeFile(w, r, indexPath)
 			return
@@ -67,7 +88,11 @@ func InitIndex() {
 			return
 		}
 
-		log.Printf("Fallback to index page")
+		if !auth.IsAuthed(r) {
+			http.Redirect(w, r, "/auth", http.StatusFound)
+			return
+		}
+
 		http.ServeFile(w, r, indexPath)
 	})
 }

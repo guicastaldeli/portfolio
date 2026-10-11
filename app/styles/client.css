@@ -11,21 +11,24 @@ html, body {
     color: #2c2c2c;
 }
 
+html {
+    overflow-y: scroll;
+}
+
 body {
     zoom: 0.85;
 }
 
 .main {
     width: 100%;
-    min-height: 100%;              /* grow with content, at least fill viewport */
-    height: auto;                  /* don't lock to 100% — content can exceed it */
+    min-height: 100%; 
+    height: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;    /* was: center */
+    justify-content: flex-start;
     gap: 0.8rem;
     box-sizing: border-box;
-    padding: 3rem 0;
 }
 
 #header-main {
@@ -89,8 +92,6 @@ body {
     display: none;
 }
 
-/* ─────────── PROJECT LIST ─────────── */
-
 #projects-container {
     display: flex;
     flex-direction: column;
@@ -104,8 +105,6 @@ body {
     justify-content: center;
     align-items: center;
 }
-
-/* ─────────── PROJECT CARD ─────────── */
 
 .project-container {
     display: flex;
@@ -131,7 +130,6 @@ body {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-/* Dates column: hidden to match the format */
 .project-metadata {
     display: none;
 }
@@ -180,8 +178,6 @@ body {
     color: #2c2c2c;
     white-space: nowrap;
 }
-
-/* ─────────── MEDIA ─────────── */
 
 .project-photos {
     display: flex;
@@ -289,8 +285,6 @@ body {
     color: #2c2c2c;
 }
 
-/* ─────────── DESCRIPTION ─────────── */
-
 #project-description-content-container {
     width: 100%;
     overflow: hidden;
@@ -309,8 +303,6 @@ body {
     overflow-wrap: break-word;
     width: 100%;
 }
-
-/* ─────────── LINKS ─────────── */
 
 .project-links {
     display: flex;
@@ -356,8 +348,6 @@ body {
     color: #4366a5;
     text-decoration: underline;
 }
-
-/* ─────────── MODAL ─────────── */
 
 .project-modal {
     position: fixed;
@@ -540,8 +530,6 @@ body {
     text-decoration: underline;
 }
 
-/* ─────────── IMAGE OVERLAY ─────────── */
-
 .image-overlay {
     position: fixed;
     top: 0;
@@ -567,9 +555,6 @@ body {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-/* ─────────── MEDIA QUERIES ─────────── */
-
-/* Below 768px: stack the card vertically */
 @media screen and (max-width: 768px) {
     #content {
         width: 95%;

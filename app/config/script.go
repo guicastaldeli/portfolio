@@ -62,23 +62,20 @@ func InitScripts() {
 		http.ServeFile(w, r, fullPath)
 	})
 	// Env
-	http.HandleFunc("/env/", func(w http.ResponseWriter, r *http.Request) {
-		requestedPath := r.URL.Path[len("/env/"):]
-		if requestedPath != TEMP_NAME {
-			http.NotFound(w, r)
-			return
-		}
+	for _, name := range []string{KEY_NAME, TEMP_NAME} {
+		name := name
+		http.HandleFunc("/app/.env/"+name, func(w http.ResponseWriter, r *http.Request) {
 
-		wd, _ := os.Getwd()
-		fullPath := filepath.Join(wd, ".env", "env.temp")
+			wd, _ := os.Getwd()
+			fullPath := filepath.Join(wd, ".env", name)
+			if _, err := os.Stat(fullPath); err != nil {
+				http.NotFound(w, r)
+				return
+			}
 
-		if _, err := os.Stat(fullPath); err != nil {
-			http.NotFound(w, r)
-			return
-		}
-
-		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		w.Header().Set("Cache-Control", "no-store")
-		http.ServeFile(w, r, fullPath)
-	})
+			w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+			w.Header().Set("Cache-Control", "no-store")
+			http.ServeFile(w, r, fullPath)
+		})
+	}
 }

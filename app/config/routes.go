@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"main/api"
+	"main/auth"
 	"main/ws"
 	"net/http"
 
@@ -53,6 +54,10 @@ func Setup(s *ws.Server) {
 
 	InitScripts()
 	InitIndex()
+
+	http.HandleFunc("/api/login", EnableCORS(auth.LoginHandler))
+	http.HandleFunc("/api/logout", EnableCORS(auth.LogoutHandler))
+	http.HandleFunc("/api/auth", EnableCORS(auth.CheckAuth))
 
 	http.HandleFunc("/ws", wsServer.HandleWebSocket)
 	http.HandleFunc("/hello", EnableCORS(Hello))

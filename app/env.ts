@@ -5,7 +5,7 @@ let loading: Promise<void> | null = null;
 
 let ENV_KEY = '';
 const KEY_ADDR = '/app/.env/env.key';
-const ENV_URL = '/env/env.temp';
+const ENV_ADDR = '/app/.env/env.temp';
 
 export function GetEnv(key: string): string | undefined {
     const val = cache?.[key];
@@ -50,15 +50,15 @@ async function Load(): Promise<void> {
             if(!keyRes.ok) throw new Error(`HTTP ${keyRes.status} for ${KEY_ADDR}`);
             ENV_KEY = (await keyRes.text()).trim();
 
-            const res = await fetch(ENV_URL, { cache: 'no-store' });
-            if(!res.ok) throw new Error(`HTTP ${res.status} for ${ENV_URL}`);
+            const res = await fetch(ENV_ADDR, { cache: 'no-store' });
+            if(!res.ok) throw new Error(`HTTP ${res.status} for ${ENV_ADDR}`);
             const text = await res.text();
             const plaintext = await decrypt(text);
             cache = ParseEnv(plaintext);
 
-            console.log(`[Env] Loaded ${Object.keys(cache).length} keys from ${ENV_URL}`);
+            console.log(`[Env] Loaded ${Object.keys(cache).length} keys from ${ENV_ADDR}`);
         } catch(err) {
-            console.error(`[Env] Failed to load ${ENV_URL}:`, err);
+            console.error(`[Env] Failed to load ${ENV_ADDR}:`, err);
             cache = {};
         }
     })();
@@ -75,5 +75,5 @@ export const Env = {
     Ready: Load,
     All(): Record<string, string> { return { ...(cache ?? {}) }; },
     Has(key: string): boolean { return cache ? key in cache : false; },
-    Filename(): string { return ENV_URL; }
+    Filename(): string { return ENV_ADDR; }
 };

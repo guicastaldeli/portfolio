@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io"
 	"log"
+	"main/auth"
 	"main/db"
 	"main/message"
 	"main/ws"
@@ -116,6 +117,11 @@ func CreateProjectHandler(wsServer *ws.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		if !auth.IsAuthed(r) {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 

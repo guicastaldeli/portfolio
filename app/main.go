@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"main/auth"
 	"main/config"
 	"main/db"
 	"main/server"
@@ -34,6 +35,12 @@ func main() {
 	if err := config.InitEnv(env); err != nil {
 		log.Fatal("Failed to load env config", err)
 	}
+
+	auth.Set(
+		config.GetEnv("ADMIN_EMAIL"),
+		config.GetEnv("ADMIN_PASSWORD"),
+		config.GetEnv("SESSION_COOKIE_NAME"),
+	)
 
 	config.GenerateTemp()
 

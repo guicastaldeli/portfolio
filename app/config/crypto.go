@@ -72,9 +72,9 @@ func GenerateTemp() {
 		return
 	}
 
-	appEnv := os.Getenv("APP_ENV")
+	appEnv := GetEnv("APP_ENV")
 	if appEnv == "" {
-		appEnv = "prod"
+		appEnv = "dev"
 	}
 
 	wd, err := os.Getwd()
