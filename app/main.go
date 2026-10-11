@@ -37,9 +37,9 @@ func main() {
 	}
 
 	auth.Set(
+		config.GetEnv("SESSION_COOKIE_NAME"),
 		config.GetEnv("ADMIN_EMAIL"),
 		config.GetEnv("ADMIN_PASSWORD"),
-		config.GetEnv("SESSION_COOKIE_NAME"),
 	)
 
 	config.GenerateTemp()

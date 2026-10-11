@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 )
@@ -19,6 +20,16 @@ var (
 	instance *Env
 	once     sync.Once
 )
+
+type Roles string
+
+var Role = struct {
+	PRIVATE Roles
+	PUBLIC  Roles
+}{
+	PRIVATE: "private",
+	PUBLIC:  "public",
+}
 
 // Init
 func InitEnv(envDir string) error {
@@ -54,6 +65,46 @@ func MustGet(key string) string {
 	return value
 }
 
+// Read Role
+func readRole(path string) Roles {
+	f, err := os.Open(path)
+	if err != nil {
+		return "public"
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	lines := 0
+	for scanner.Scan() && lines < 20 {
+		lines++
+		line := strings.TrimSpace(scanner.Text())
+
+		if line == "" {
+			continue
+		}
+		if !strings.HasPrefix(line, "#") {
+			break
+		}
+		if !strings.Contains(line, "@role:") {
+			continue
+		}
+
+		parts := strings.SplitN(line, "@role:", 2)
+		if len(parts) != 2 {
+			continue
+		}
+		role := strings.TrimSpace(parts[1])
+		role = strings.ToLower(role)
+
+		if role == string(Role.PRIVATE) {
+			return Role.PRIVATE
+		}
+		return Role.PUBLIC
+	}
+
+	return Role.PUBLIC
+}
+
 // Load
 func (c *Env) loadEnvFiles(dir string) error {
 	appEnv := os.Getenv("APP_ENV")
@@ -63,35 +114,62 @@ func (c *Env) loadEnvFiles(dir string) error {
 
 	log.Printf("APP_ENV: %s", appEnv)
 
-	envFiles := []string{
-		".env",
-		fmt.Sprintf(".env.%s", appEnv),
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return fmt.Errorf("read env dir %s: %w", dir, err)
 	}
 
-	if appEnv == "prod" {
-		envFiles = append(envFiles, ".env.production")
-	}
+	en := ".env"
+	appEnvFile := en + "." + appEnv
 
-	var loadedCount int
+	var public, private []string
 
-	for _, envFile := range envFiles {
-		filePath := filepath.Join(dir, envFile)
-		if _, err := os.Stat(filePath); err == nil {
-			if err := c.loadEnvFile(filePath); err != nil {
-				log.Printf("Warning: Failed to load %s: %v", envFile, err)
-			} else {
-				loadedCount++
-				log.Printf("Loaded env file: %s", envFile)
+	for _, e := range entries {
+		if e.IsDir() {
+			continue
+		}
+		name := e.Name()
+
+		if !strings.HasPrefix(name, en) {
+			continue
+		}
+		if name == KEY_NAME || name == TEMP_NAME {
+			continue
+		}
+
+		fullPath := filepath.Join(dir, name)
+		role := readRole(fullPath)
+
+		if role == Role.PUBLIC {
+			if name != en && name != appEnvFile {
+				log.Printf("Skipping env file: %s (APP_ENV=%s)", name, appEnv)
+				continue
 			}
+
+			public = append(public, name)
+			continue
+		}
+
+		private = append(private, name)
+	}
+
+	sort.Strings(public)
+	sort.Strings(private)
+	ordered := append(public, private...)
+
+	var loaded int
+	for _, name := range ordered {
+		fullPath := filepath.Join(dir, name)
+		if err := c.loadEnvFile(fullPath); err != nil {
+			log.Printf("Warning: Failed to load %s: %v", name, err)
 		} else {
-			log.Printf("Env file not found: %s (skipping)", envFile)
+			loaded++
+			log.Printf("Loaded env file: %s", name)
 		}
 	}
-
-	if loadedCount == 0 {
+	if loaded == 0 {
 		log.Printf("No .env files loaded - using only system environment variables")
 	}
-
 	return nil
 }
 

@@ -26,8 +26,8 @@ func Set(sessionCookieName, email, password string) {
 		log.Fatal("auth: email or password missing")
 	}
 
-	email = ADMIN_EMAIL
-	password = ADMIN_PASSWORD
+	ADMIN_EMAIL = email
+	ADMIN_PASSWORD = password
 }
 
 // ----------
