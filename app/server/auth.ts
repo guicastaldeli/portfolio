@@ -24,19 +24,23 @@ export class Auth {
             const err = document.getElementById('err');
             err!.textContent = '';
         
-            const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({
-                    email: this.email?.value,
-                    password: this.password?.value
-                })
-            });
-            if(res.ok) {
-                window.location.href = '/'
-            } else {
-                err!.textContent = 'Invalid credentials';
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        email: this.email?.value,
+                        password: this.password?.value
+                    })
+                });
+                if(res.ok) {
+                    window.location.href = '/'
+                } else {
+                    err!.textContent = 'Invalid credentials';
+                }
+            } catch(e) {
+                err!.textContent = 'Network error';
             }
         });
     }

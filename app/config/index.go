@@ -24,12 +24,12 @@ func InitIndex() {
 
 	appPath := filepath.Join(wd, "app")
 	if _, err := os.Stat(appPath); err == nil {
-		authPath = filepath.Join(staticDir, "app", "server", "auth.html")
+		authPath = filepath.Join(wd, "app", "server", "auth.html")
 		indexPath = filepath.Join(wd, "app", "server", "index.html")
 		projectEditorPath = filepath.Join(wd, "app", "server", "project-editor.html")
 		staticDir = filepath.Join(wd, "app", "server")
 	} else {
-		authPath = filepath.Join(staticDir, "server", "auth.html")
+		authPath = filepath.Join(wd, "server", "auth.html")
 		indexPath = filepath.Join(wd, "server", "index.html")
 		projectEditorPath = filepath.Join(wd, "server", "project-editor.html")
 		staticDir = filepath.Join(wd, "server")
