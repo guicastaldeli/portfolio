@@ -5,6 +5,9 @@ export class Auth {
     private password: HTMLInputElement | null = null;
 
     constructor() {
+        console.log('Auth constructed');
+        this.form = document.querySelector('#login-form');
+        console.log('form found:', !!this.form);
         this.form = document.querySelector('#login-form');
         this.email = document.querySelector('#email');
         this.password = document.querySelector('#password');
