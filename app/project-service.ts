@@ -30,6 +30,7 @@ export class ProjectService {
     public async createProject(data: CreateProjectRequest): Promise<{ id: number; message: string }> {
         const res = await fetch(`${this.url}/api/projects`, {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -47,6 +48,7 @@ export class ProjectService {
     public async updateProject(id: number, data: CreateProjectRequest): Promise<{ message: string }> {
         const res = await fetch(`${this.url}/api/projects/${id}`, {
             method: 'PUT',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -63,7 +65,8 @@ export class ProjectService {
      */
     public async deleteProject(id: number): Promise<{ message: string }> {
         const res = await fetch(`${this.url}/api/projects/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            credentials: 'include'
         });
         if(!res.ok) {
             throw new Error('Failed to delete project');

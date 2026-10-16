@@ -1,0 +1,24 @@
+FROM golang:1.26 AS builder
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y gcc nodejs npm && rm -rf /var/lib/apt/lists/*
+
+COPY app/go.mod app/go.sum ./app/
+RUN cd app && go mod download
+
+COPY . .
+
+RUN npm install && npx tsc
+RUN cd app && CGO_ENABLED=1 go build -o /out/portfolio-server .
+
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y ca-certificates libsqlite3-0 tzdata && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY --from=builder /out/portfolio-server /app/portfolio-server
+COPY --from=builder /app/app /app/app
+COPY --from=builder /app/.out /app/.out
+
+WORKDIR /app/app
+EXPOSE 3001
+CMD ["/app/portfolio-server"]
