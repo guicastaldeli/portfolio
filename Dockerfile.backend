@@ -8,7 +8,7 @@ RUN cd app && go mod download
 
 COPY . .
 
-RUN npm install && npx tsc
+RUN npm install && chmod +x node_modules/.bin/tsc && ./node_modules/.bin/tsc
 RUN cd app && CGO_ENABLED=1 go build -o /out/portfolio-server .
 
 FROM debian:bookworm-slim
