@@ -39,7 +39,7 @@ func init() {
 		return
 	}
 
-	log.Printf("[env] loaded key from %s (%d chars)", keyPath, len(ekey))
+	//log.Printf("[env] loaded key from %s (%d chars)", keyPath, len(ekey))
 }
 
 // Encrypt

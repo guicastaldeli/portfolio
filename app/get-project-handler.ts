@@ -43,7 +43,7 @@ export class GetProjectHandler {
                 }
             }
             this.ws.onclose = () => {
-                console.log('WS disconnected');
+                //console.log('WS disconnected');
                 setTimeout(() => this.connect(), 3000);
             }
         });

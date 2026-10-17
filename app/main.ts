@@ -78,7 +78,7 @@ export class Main {
         try {
             console.log('Loading projects...');
             this.currentProjects = await this.projectService.getAllProjects();
-            console.log('Projects loaded:', this.currentProjects);
+            //console.log('Projects loaded:', this.currentProjects);
             this.renderProjects();
         } catch (err) {
             console.error('Failed to load projects', err);
@@ -274,7 +274,7 @@ export class Main {
     }
 
     private renderProjects(): void {
-        console.log('Rendering projects...');
+        //console.log('Rendering projects...');
         const container = document.getElementById('projects-container');
         
         if(!container) {
@@ -294,7 +294,7 @@ export class Main {
             return;
         }
 
-        console.log(`Rendering ${this.currentProjects.length} projects`);
+        //console.log(`Rendering ${this.currentProjects.length} projects`);
         
         this.currentProjects.forEach(project => {
             const photos = project.media.filter(m => m.type === 'photo');
@@ -481,6 +481,6 @@ export class Main {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM ready, creating Main');
+    //console.log('DOM ready, creating Main');
     new Main();
 });

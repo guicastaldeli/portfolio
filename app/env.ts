@@ -56,7 +56,7 @@ async function Load(): Promise<void> {
             const plaintext = await decrypt(text);
             cache = ParseEnv(plaintext);
 
-            console.log(`[Env] Loaded ${Object.keys(cache).length} keys from ${ENV_ADDR}`);
+            //console.log(`[Env] Loaded ${Object.keys(cache).length} keys from ${ENV_ADDR}`);
         } catch(err) {
             console.error(`[Env] Failed to load ${ENV_ADDR}:`, err);
             cache = {};
